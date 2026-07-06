@@ -420,6 +420,7 @@ body[data-mode="edit"] .w-resize{display:block}
 .cal-sel-day{font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:3px}
 .cse{display:flex; align-items:center; gap:7px; font-size:12px; padding:2.5px 2px; min-width:0}
 .cse i{width:5px; height:5px; border-radius:99px; background:var(--accent); flex:0 0 auto}
+.cse.dl{flex:0 0 auto; flex-direction:row; align-items:center; min-height:auto}
 .cse.dl i{background:var(--amber)}
 .cse .t{flex:0 0 auto; color:var(--accent-deep); font-weight:600; font-size:11px; font-variant-numeric:tabular-nums}
 .cse.dl .t{color:#8A6A24}
@@ -766,6 +767,25 @@ function showGhost(x, y, w, h, ok) {
 }
 function hideGhost(){ ghost.hidden = true; }
 
+/* Find the closest non-colliding grid spot to (gx, gy) so drops "give" instead of refusing. */
+function nearestFree(id, gx, gy, gw, gh) {
+  if (!collides(id, gx, gy, gw, gh)) return { x: gx, y: gy };
+  let best = null, bestD = Infinity;
+  const R = 8;                                    // search radius in cells
+  for (let dy = -R; dy <= R; dy++) {
+    const ny = gy + dy;
+    if (ny < 0) continue;
+    for (let dx = -R; dx <= R; dx++) {
+      const nx = gx + dx;
+      if (nx < 0 || nx > COLS - gw) continue;
+      const d = dx * dx + dy * dy;
+      if (d >= bestD) continue;
+      if (!collides(id, nx, ny, gw, gh)) { bestD = d; best = { x: nx, y: ny }; }
+    }
+  }
+  return best;
+}
+
 /* ---------- drag & resize ---------- */
 function startDrag(e, w, node) {
   if (mode !== 'edit' || e.button === 2) return;
@@ -783,9 +803,11 @@ function startDrag(e, w, node) {
     node.style.top = Math.max(-6, start.top + dy) + 'px';
     const gx = clamp(Math.round((start.left + dx) / (cellW + GAP)), 0, COLS - w.w);
     const gy = Math.max(0, Math.round((start.top + dy) / (ROW + GAP)));
-    target = { x: gx, y: gy, ok: !collides(w.id, gx, gy, w.w, w.h) };
-    showGhost(gx, gy, w.w, w.h, target.ok);
-    setCanvasHeight(gy + w.h + 2);
+    const snap = nearestFree(w.id, gx, gy, w.w, w.h);   // nudge to closest open spot
+    if (snap) target = { x: snap.x, y: snap.y, ok: true };
+    else target = { ...target, ok: false };             // keep last good spot as fallback
+    showGhost(snap ? snap.x : gx, snap ? snap.y : gy, w.w, w.h, !!snap);
+    setCanvasHeight((snap ? snap.y : gy) + w.h + 2);
   };
   const up = () => {
     window.removeEventListener('pointermove', move);
@@ -793,7 +815,7 @@ function startDrag(e, w, node) {
     hideGhost();
     node.classList.remove('dragging');
     document.body.classList.remove('interacting');
-    if (target.ok) { w.x = target.x; w.y = target.y; }
+    w.x = target.x; w.y = target.y;                     // last valid spot — never a full revert
     positionEl(node, w);
     setCanvasHeight();
     saveState();
@@ -821,9 +843,10 @@ function startResize(e, w, node) {
     node.style.height = nh + 'px';
     const gw = clamp(Math.round((nw + GAP) / (cellW + GAP)), t.minW, COLS - w.x);
     const gh = Math.max(t.minH, Math.round((nh + GAP) / (ROW + GAP)));
-    target = { w: gw, h: gh, ok: !collides(w.id, w.x, w.y, gw, gh) };
-    showGhost(w.x, w.y, gw, gh, target.ok);
-    setCanvasHeight(w.y + gh + 2);
+    if (!collides(w.id, w.x, w.y, gw, gh)) target = { w: gw, h: gh, ok: true };
+    else target = { ...target, ok: false };             // hold the last size that fit
+    showGhost(w.x, w.y, target.w, target.h, target.ok);
+    setCanvasHeight(w.y + target.h + 2);
   };
   const up = () => {
     window.removeEventListener('pointermove', move);
@@ -831,7 +854,7 @@ function startResize(e, w, node) {
     hideGhost();
     node.classList.remove('dragging');
     document.body.classList.remove('interacting');
-    if (target.ok) { w.w = target.w; w.h = target.h; }
+    w.w = target.w; w.h = target.h;                     // last size that fit — never a full revert
     positionEl(node, w);
     setCanvasHeight();
     saveState();
@@ -1482,7 +1505,11 @@ const TYPES = {
     icon: ICONS.cal, defW: 4, defH: 5, minW: 3, minH: 4,
     defData: () => ({}),
     run(w) {
-      if (!w.run) { const n = new Date(); w.run = { y: n.getFullYear(), m: n.getMonth(), sel: dayKey(n) }; }
+      const today = dayKey(new Date());
+      if (!w.run || w.run.base !== today) {       // stale saved state → snap back to today
+        const n = new Date();
+        w.run = { y: n.getFullYear(), m: n.getMonth(), sel: today, base: today };
+      }
       return w.run;
     },
     gather() {                     // pull dated events & open deadlines from other widgets
