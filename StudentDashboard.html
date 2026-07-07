@@ -102,19 +102,22 @@ input,textarea,select{font:inherit; color:inherit}
 
 
 /* ============ productivity timer ============ */
-.tm{height:100%; display:flex; flex-direction:column; gap:8px}
-.tm-top{display:flex; align-items:center; justify-content:space-between; gap:10px}
-.tm-time{font:600 30px/1 var(--serif); font-variant-numeric:tabular-nums; letter-spacing:.01em}
+.tm{flex:1; min-height:0; display:flex; flex-direction:column; align-items:center; gap:7px; text-align:center; overflow:hidden}
+.tm-state{
+  font-size:10px; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--muted); background:var(--panel-2); padding:3px 10px; border-radius:99px;
+}
+.tm-state.on{color:#4E6B44; background:var(--green-soft)}
+.tm-time{font:600 clamp(24px,3vw,34px)/1 var(--serif); font-variant-numeric:tabular-nums; letter-spacing:-.5px}
 .tm-time.on{color:var(--accent-deep)}
-.tm-state{font-size:11px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--muted)}
-.tm-state.on{color:var(--green)}
-.tm-week{margin-top:auto; border-top:1px dashed var(--line-2); padding-top:8px}
-.tm-week-title{font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; display:flex; justify-content:space-between}
-.tm-week-title b{color:var(--soft); font-weight:600; letter-spacing:0; text-transform:none}
-.tm-days{display:grid; grid-template-columns:repeat(7,1fr); gap:4px}
-.tm-d{display:flex; flex-direction:column; align-items:center; gap:2px; padding:5px 2px; border-radius:8px; background:var(--panel-2)}
-.tm-d span{font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em}
-.tm-d b{font-size:12px; font-weight:600; font-variant-numeric:tabular-nums; color:var(--soft)}
+.tm .pm-ctl{align-items:center}
+.tm-week{width:100%; margin-top:auto; min-height:0; border-top:1px dashed var(--line-2); padding-top:7px; overflow:hidden}
+.tm-week-title{font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:5px; display:flex; justify-content:space-between; gap:8px}
+.tm-week-title b{color:var(--soft); font-weight:600; letter-spacing:0; text-transform:none; white-space:nowrap}
+.tm-days{display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:3px}
+.tm-d{display:flex; flex-direction:column; align-items:center; gap:1px; padding:4px 1px; border-radius:7px; background:var(--panel-2); min-width:0}
+.tm-d span{font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em}
+.tm-d b{font-size:11px; font-weight:600; font-variant-numeric:tabular-nums; color:var(--soft)}
 .tm-d.today{background:var(--accent-soft)}
 .tm-d.today b{color:var(--accent-deep)}
 .tm-d.zero b{color:var(--faint)}
@@ -511,6 +514,7 @@ body[data-mode="edit"] .w-resize{display:block}
   .widget[data-type="schedule"] .w-body,.widget[data-type="links"] .w-body{min-height:160px}
   .widget[data-type="clock"] .w-body,.widget[data-type="countdown"] .w-body,.widget[data-type="y2027"] .w-body,.widget[data-type="pomo"] .w-body,.widget[data-type="quote"] .w-body{min-height:104px}
   .widget[data-type="dailies"] .w-body,.widget[data-type="deadlines"] .w-body{min-height:210px}
+  .widget[data-type="timer"] .w-body{min-height:190px}
   .widget[data-type="calendar"] .w-body{min-height:360px}
   .dash-title{width:52vw}
 }
@@ -1324,7 +1328,7 @@ const TYPES = {
   /* ---- productivity timer ---- */
   timer: {
     label: 'Timer', desc: 'Continuous productivity stopwatch with weekly hours.',
-    icon: ICONS.stopwatch, defW: 4, defH: 3, minW: 3, minH: 3,
+    icon: ICONS.stopwatch, defW: 4, defH: 3, minW: 2, minH: 2,
     defData: () => ({ log: {}, startedAt: null, last: null }),
     weekKeys() {                                   // Mon..Sun of the current week
       const n = new Date();
@@ -1342,15 +1346,11 @@ const TYPES = {
       else if (w.data.startedAt) w.data.last = Date.now();
       body.innerHTML = `
         <div class="tm">
-          <div class="tm-top">
-            <div>
-              <span class="tm-state"></span>
-              <div class="tm-time">00:00:00</div>
-            </div>
-            <div class="pm-ctl">
-              <button class="btn primary sm start">Start</button>
-              <button class="btn ghost sm zero">Reset session</button>
-            </div>
+          <span class="tm-state"></span>
+          <div class="tm-time">00:00:00</div>
+          <div class="pm-ctl">
+            <button class="btn primary sm start">Start</button>
+            <button class="link zero" title="Reset the current session clock">Reset</button>
           </div>
           <div class="tm-week">
             <div class="tm-week-title"><span>This week</span><b class="tm-total"></b></div>
@@ -1432,7 +1432,7 @@ const TYPES = {
   /* ---- schedule ---- */
   schedule: {
     label: 'Schedule', desc: 'Plan any day — one-off or repeating events.',
-    icon: ICONS.schedule, defW: 5, defH: 3, minW: 4, minH: 3,
+    icon: ICONS.schedule, defW: 5, defH: 3, minW: 3, minH: 2,
     defData: () => ({ items: [] }),
     run(w) {
       const today = dayKey(new Date());
@@ -1581,7 +1581,7 @@ const TYPES = {
   /* ---- deadlines ---- */
   deadlines: {
     label: 'Deadlines', desc: 'Due dates, sorted by how close they loom.',
-    icon: ICONS.target, defW: 4, defH: 4, minW: 3, minH: 3,
+    icon: ICONS.target, defW: 4, defH: 4, minW: 2, minH: 2,
     defData: () => ({ items: [] }),
     render(body, w) {
       body.innerHTML = `
