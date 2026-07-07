@@ -100,6 +100,25 @@ input,textarea,select{font:inherit; color:inherit}
 .btn.sm{padding:6px 12px; font-size:12.5px; border-radius:8px}
 .btn svg{width:15px; height:15px}
 
+
+/* ============ productivity timer ============ */
+.tm{height:100%; display:flex; flex-direction:column; gap:8px}
+.tm-top{display:flex; align-items:center; justify-content:space-between; gap:10px}
+.tm-time{font:600 30px/1 var(--serif); font-variant-numeric:tabular-nums; letter-spacing:.01em}
+.tm-time.on{color:var(--accent-deep)}
+.tm-state{font-size:11px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--muted)}
+.tm-state.on{color:var(--green)}
+.tm-week{margin-top:auto; border-top:1px dashed var(--line-2); padding-top:8px}
+.tm-week-title{font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; display:flex; justify-content:space-between}
+.tm-week-title b{color:var(--soft); font-weight:600; letter-spacing:0; text-transform:none}
+.tm-days{display:grid; grid-template-columns:repeat(7,1fr); gap:4px}
+.tm-d{display:flex; flex-direction:column; align-items:center; gap:2px; padding:5px 2px; border-radius:8px; background:var(--panel-2)}
+.tm-d span{font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em}
+.tm-d b{font-size:12px; font-weight:600; font-variant-numeric:tabular-nums; color:var(--soft)}
+.tm-d.today{background:var(--accent-soft)}
+.tm-d.today b{color:var(--accent-deep)}
+.tm-d.zero b{color:var(--faint)}
+
 /* ============ widget tray (customize) ============ */
 .tray{
   border-bottom:1px solid var(--line);
@@ -130,7 +149,9 @@ input,textarea,select{font:inherit; color:inherit}
 .tcard span{display:block; font-size:11.5px; color:var(--muted); margin-top:2px; line-height:1.35}
 .tcard i{display:block; font-style:normal; font-size:10.5px; color:var(--faint); margin-top:4px; letter-spacing:.05em}
 .tray-foot{display:flex; align-items:center; justify-content:space-between; gap:14px; margin-top:12px}
-.tray-io{display:flex; gap:14px}
+.tray-io{display:flex; gap:14px; align-items:center; flex-wrap:wrap}
+.tray-check{display:inline-flex; align-items:center; gap:6px; font-size:12.5px; color:var(--soft); cursor:pointer; user-select:none}
+.tray-check input{accent-color:var(--accent)}
 .link.io:hover{color:var(--accent-deep); text-decoration-color:var(--accent-deep)}
 .link{font-size:12px; color:var(--muted); text-decoration:underline; text-underline-offset:3px; text-decoration-color:var(--line-2)}
 .link:hover{color:var(--danger); text-decoration-color:var(--danger)}
@@ -527,6 +548,7 @@ body[data-mode="edit"] .w-resize{display:block}
       <button class="link io" id="exportBtn">Export backup</button>
       <button class="link io" id="importBtn">Import backup</button>
       <input type="file" id="importFile" accept=".json,application/json" hidden>
+      <label class="tray-check"><input type="checkbox" id="confirmToggle" checked> Ask before deleting items</label>
     </div>
     <button class="link" id="resetBtn">Reset to default layout</button>
   </div>
@@ -620,6 +642,7 @@ const ICONS = {
   quote:    I('<path d="M9.8 7.2C7.3 8.3 6 10.3 6 13v3.8h4.8V12H8.2c.2-1.5 1-2.6 2.4-3.3z"/><path d="M19 7.2c-2.5 1.1-3.8 3.1-3.8 5.8v3.8H20V12h-2.6c.2-1.5 1-2.6 2.4-3.3z"/>'),
   chevL:    I('<path d="M14.5 5.5L8 12l6.5 6.5"/>'),
   chevR:    I('<path d="M9.5 5.5L16 12l-6.5 6.5"/>'),
+  stopwatch:I('<circle cx="12" cy="13.5" r="7"/><path d="M12 9.8v3.7l2.6 1.6M9.8 3.2h4.4M12 3.2v3.3M18.3 7.2l1.5-1.5"/>'),
   repeat:   I('<path d="M4.8 9.2a7 7 0 0 1 12-2.4L18.8 9M18.8 4.2V9h-4.6M19.2 14.8a7 7 0 0 1-12 2.4L5.2 15M5.2 19.8V15h4.6"/>'),
 };
 
@@ -715,6 +738,9 @@ const flashSaved = (() => {
 })();
 const persist = debounce(() => { store.set(LS_KEY, JSON.stringify(state)); flashSaved(); }, 350);
 function saveState(){ persist(); }
+function flushState(){ try { store.set(LS_KEY, JSON.stringify(state)); } catch (e) {} }
+window.addEventListener('pagehide', flushState);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushState(); });
 
 /* ---------- layout ---------- */
 function computeCell() {
@@ -950,6 +976,7 @@ function widgetHasContent(w) {
   const d = w.data || {};
   if (w.type === 'note') return !!(d.text && d.text.trim());
   if (['todo', 'schedule', 'links', 'dailies', 'deadlines'].includes(w.type)) return (d.items || []).length > 0;
+  if (w.type === 'timer') return !!d.startedAt || Object.values(d.log || {}).some(v => v > 0);
   if (w.type === 'matrix') return ['q1','q2','q3','q4'].some(k => (d[k] || []).length > 0);
   return false;
 }
@@ -965,6 +992,19 @@ function requestDelete(w) {
   });
 }
 
+
+/* ---------- confirm before deleting small items (toggle in customize) ---------- */
+function confirmRowDelete(what, name, fn) {
+  if (state && state.confirmDeletes === false) { fn(); return; }
+  openModal({
+    title: `Delete this ${what}?`,
+    sub: name ? `\u201c${String(name).slice(0, 80)}\u201d will be removed. This can\u2019t be undone.` : 'This can\u2019t be undone.',
+    actions: [
+      { label: 'Cancel', cls: 'ghost' },
+      { label: 'Delete', cls: 'danger', fn },
+    ],
+  });
+}
 /* ---------- generic list row (todo / matrix items) ---------- */
 function makeCheckRow(item, { onToggle, onDelete, mini }) {
   const row = el('div', mini ? 'mi' : 'ti');
@@ -978,7 +1018,7 @@ function makeCheckRow(item, { onToggle, onDelete, mini }) {
   }
   row.appendChild(el('span', 'tx', item.t));
   const x = el('button', 'row-x'); x.innerHTML = ICONS.x; x.setAttribute('aria-label', 'Delete item');
-  x.addEventListener('click', e => { e.stopPropagation(); onDelete(); });
+  x.addEventListener('click', e => { e.stopPropagation(); confirmRowDelete('task', item.t, onDelete); });
   row.appendChild(x);
   return row;
 }
@@ -1102,7 +1142,7 @@ const TYPES = {
   /* ---- to-do ---- */
   todo: {
     label: 'To-do list', desc: 'Tasks with checkboxes and a done count.',
-    icon: ICONS.todo, defW: 4, defH: 5, minW: 3, minH: 3,
+    icon: ICONS.todo, defW: 4, defH: 5, minW: 2, minH: 2,
     defData: () => ({ items: [] }),
     render(body, w) {
       body.innerHTML = `
@@ -1281,6 +1321,114 @@ const TYPES = {
     },
   },
 
+  /* ---- productivity timer ---- */
+  timer: {
+    label: 'Timer', desc: 'Continuous productivity stopwatch with weekly hours.',
+    icon: ICONS.stopwatch, defW: 4, defH: 3, minW: 3, minH: 3,
+    defData: () => ({ log: {}, startedAt: null, last: null }),
+    weekKeys() {                                   // Mon..Sun of the current week
+      const n = new Date();
+      const mon = addDays(n, -((n.getDay() + 6) % 7));
+      return Array.from({ length: 7 }, (_, i) => dayKey(addDays(mon, i)));
+    },
+    prune(w) {                                     // keep the log from growing forever
+      const keep = dayKey(addDays(new Date(), -14));
+      Object.keys(w.data.log || {}).forEach(k => { if (k < keep) delete w.data.log[k]; });
+    },
+    render(body, w) {
+      w.data.log = w.data.log || {};
+      this.prune(w);
+      if (w.data.startedAt && w.data.last) this.credit(w);   // resume after reload — credit time that passed while the tab was closed
+      else if (w.data.startedAt) w.data.last = Date.now();
+      body.innerHTML = `
+        <div class="tm">
+          <div class="tm-top">
+            <div>
+              <span class="tm-state"></span>
+              <div class="tm-time">00:00:00</div>
+            </div>
+            <div class="pm-ctl">
+              <button class="btn primary sm start">Start</button>
+              <button class="btn ghost sm zero">Reset session</button>
+            </div>
+          </div>
+          <div class="tm-week">
+            <div class="tm-week-title"><span>This week</span><b class="tm-total"></b></div>
+            <div class="tm-days"></div>
+          </div>
+        </div>`;
+      const startBtn = body.querySelector('.start');
+      startBtn.addEventListener('click', () => {
+        if (w.data.startedAt) {                       // stop
+          this.credit(w);
+          w.data.startedAt = null; w.data.last = null;
+        } else {                                      // start
+          w.data.startedAt = Date.now(); w.data.last = Date.now();
+        }
+        saveState();
+        this.paint(body, w);
+      });
+      body.querySelector('.zero').addEventListener('click', () => {
+        if (w.data.startedAt) { w.data.startedAt = Date.now(); w.data.last = Date.now(); }
+        saveState();
+        this.paint(body, w);
+      });
+      this.paint(body, w);
+    },
+    credit(w) {                                       // add elapsed-since-last-mark to the log, split across days
+      if (!w.data.last) return;
+      const now = Date.now();
+      let from = w.data.last;
+      while (from < now) {
+        const d = new Date(from);
+        const nextMidnight = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1).getTime();
+        const upto = Math.min(now, nextMidnight);
+        const sec = Math.round((upto - from) / 1000);
+        if (sec > 0) {
+          const k = dayKey(new Date(from));
+          w.data.log[k] = (w.data.log[k] || 0) + sec;
+        }
+        from = upto;
+      }
+      w.data.last = now;
+    },
+    paint(body, w) {
+      const on = !!w.data.startedAt;
+      const st = body.querySelector('.tm-state');
+      st.textContent = on ? 'Running' : 'Stopped';
+      st.classList.toggle('on', on);
+      const tEl = body.querySelector('.tm-time');
+      tEl.classList.toggle('on', on);
+      const sec = on ? Math.floor((Date.now() - w.data.startedAt) / 1000) : 0;
+      tEl.textContent = `${pad2(Math.floor(sec / 3600))}:${pad2(Math.floor(sec / 60) % 60)}:${pad2(sec % 60)}`;
+      body.querySelector('.start').textContent = on ? 'Stop' : 'Start';
+      /* week table */
+      const days = body.querySelector('.tm-days');
+      days.innerHTML = '';
+      const today = dayKey(new Date());
+      let total = 0;
+      this.weekKeys().forEach(k => {
+        const s = (w.data.log[k] || 0) + (on && k === today ? Math.round((Date.now() - w.data.last) / 1000) : 0);
+        total += s;
+        const h = s / 3600;
+        const d = el('div', 'tm-d' + (k === today ? ' today' : '') + (s === 0 ? ' zero' : ''));
+        d.append(el('span', null, fromKey(k).toLocaleDateString(undefined, { weekday: 'short' }).slice(0, 2)),
+                 el('b', null, h ? (h >= 10 ? h.toFixed(0) : h.toFixed(1)) : '0'));
+        d.title = `${fmtDayLabel(k)} — ${(s / 3600).toFixed(2)} h`;
+        days.appendChild(d);
+      });
+      body.querySelector('.tm-total').textContent = (total / 3600).toFixed(1) + ' h total';
+      const m = mounted.get(w.id);
+      if (m) m.extra.textContent = on ? 'timing…' : '';
+    },
+    tick(body, w) {
+      if (!w.data.startedAt) return;
+      this.credit(w);                                 // rolls into the right day across midnight
+      saveState();
+      this.paint(body, w);
+    },
+  },
+
   /* ---- schedule ---- */
   schedule: {
     label: 'Schedule', desc: 'Plan any day — one-off or repeating events.',
@@ -1336,11 +1484,11 @@ const TYPES = {
             row.appendChild(rep2);
           }
           const x = el('button', 'row-x'); x.innerHTML = ICONS.x; x.setAttribute('aria-label', 'Delete event');
-          x.addEventListener('click', () => {
+          x.addEventListener('click', () => confirmRowDelete('event', item.label, () => {
             const idx = w.data.items.indexOf(item);
             if (idx > -1) w.data.items.splice(idx, 1);
             draw(); saveState(); syncCalendars();
-          });
+          }));
           row.appendChild(x);
           list.appendChild(row);
         });
@@ -1367,7 +1515,7 @@ const TYPES = {
   /* ---- dailies ---- */
   dailies: {
     label: 'Dailies', desc: 'Every-day habits — keep the streak alive.',
-    icon: ICONS.flame, defW: 4, defH: 4, minW: 3, minH: 3,
+    icon: ICONS.flame, defW: 4, defH: 4, minW: 2, minH: 2,
     defData: () => ({ items: [] }),
     render(body, w) {
       body.innerHTML = `
@@ -1406,7 +1554,7 @@ const TYPES = {
           chip.innerHTML = `${ICONS.flame}<b>${it.streak || 0}</b>`;
           chip.title = `${it.streak || 0}-day streak · best ${it.best || 0}`;
           const x = el('button', 'row-x'); x.innerHTML = ICONS.x; x.setAttribute('aria-label', 'Delete daily');
-          x.addEventListener('click', () => { w.data.items.splice(idx, 1); draw(); saveState(); });
+          x.addEventListener('click', () => confirmRowDelete('daily', it.t, () => { w.data.items.splice(idx, 1); draw(); saveState(); }));
           row.append(tick, el('span', 'tx', it.t), chip, x);
           list.appendChild(row);
         });
@@ -1475,11 +1623,11 @@ const TYPES = {
             row.appendChild(el('span', 'badge' + (b.c ? ' ' + b.c : ''), b.t));
           }
           const x = el('button', 'row-x'); x.innerHTML = ICONS.x; x.setAttribute('aria-label', 'Delete deadline');
-          x.addEventListener('click', () => {
+          x.addEventListener('click', () => confirmRowDelete('deadline', item.t, () => {
             const idx = w.data.items.indexOf(item);
             if (idx > -1) w.data.items.splice(idx, 1);
             draw(); saveState(); syncCalendars();
-          });
+          }));
           row.appendChild(x);
           list.appendChild(row);
         });
@@ -1730,7 +1878,7 @@ const TYPES = {
           const arr = el('span', 'arr'); arr.innerHTML = ICONS.external; arr.querySelector('svg').style.width = '12px';
           row.appendChild(arr);
           const x = el('button', 'row-x'); x.innerHTML = ICONS.x; x.setAttribute('aria-label', 'Delete link');
-          x.addEventListener('click', e => { e.stopPropagation(); w.data.items.splice(idx, 1); draw(); saveState(); });
+          x.addEventListener('click', e => { e.stopPropagation(); confirmRowDelete('link', item.label, () => { w.data.items.splice(idx, 1); draw(); saveState(); }); });
           row.appendChild(x);
           const open = () => window.open(norm(item.url), '_blank', 'noopener');
           row.addEventListener('click', e => { if (!e.target.closest('.row-x')) open(); });
@@ -1751,7 +1899,7 @@ const TYPES = {
     },
   },
 };
-const TYPE_ORDER = ['clock', 'countdown', 'y2027', 'calendar', 'schedule', 'dailies', 'deadlines', 'todo', 'matrix', 'note', 'pomo', 'links', 'quote'];
+const TYPE_ORDER = ['clock', 'countdown', 'y2027', 'calendar', 'schedule', 'dailies', 'deadlines', 'todo', 'matrix', 'note', 'pomo', 'timer', 'links', 'quote'];
 
 /* ================================================================
    SETTINGS MODAL
@@ -1894,6 +2042,10 @@ titleInput.addEventListener('input', () => {
 });
 titleInput.addEventListener('keydown', e => { if (e.key === 'Enter') titleInput.blur(); });
 
+const confirmToggle = $('#confirmToggle');
+confirmToggle.checked = state.confirmDeletes !== false;
+confirmToggle.addEventListener('change', () => { state.confirmDeletes = confirmToggle.checked; saveState(); });
+
 $('#modeBtn').addEventListener('click', () => setMode(mode === 'edit' ? 'view' : 'edit'));
 $('#emptyBtn').addEventListener('click', () => setMode('edit'));
 $('#resetBtn').addEventListener('click', () => openModal({
@@ -1901,7 +2053,7 @@ $('#resetBtn').addEventListener('click', () => openModal({
   sub: 'This replaces your current layout and content with the default example.',
   actions: [
     { label: 'Cancel', cls: 'ghost' },
-    { label: 'Reset', cls: 'danger', fn: () => { state = defaultState(); applyTitle(); renderAll(); saveState(); } },
+    { label: 'Reset', cls: 'danger', fn: () => { state = defaultState(); applyTitle(); confirmToggle.checked = state.confirmDeletes !== false; renderAll(); saveState(); } },
   ],
 }));
 
@@ -1940,7 +2092,7 @@ $('#importFile').addEventListener('change', e => {
       sub: `This replaces your current dashboard with \u201c${s.title || 'My Dashboard'}\u201d (${s.widgets.length} widget${s.widgets.length === 1 ? '' : 's'}).`,
       actions: [
         { label: 'Cancel', cls: 'ghost' },
-        { label: 'Import', cls: 'primary', fn: () => { state = s; applyTitle(); renderAll(); saveState(); } },
+        { label: 'Import', cls: 'primary', fn: () => { state = s; applyTitle(); confirmToggle.checked = s.confirmDeletes !== false; renderAll(); saveState(); } },
       ],
     });
   };

@@ -34,12 +34,13 @@ I made this app with Claude, few choices worth calling out:
 
 ## Features
 
-- **Customizable widget grid**: add, remove, drag, and resize widgets on a snapping grid; layout is saved automatically.
+- **Customizable widget grid**: add, remove, drag, and resize widgets on a snapping grid; layout is saved automatically. Compact widgets like the to-do list and dailies can be squashed down to 2×2.
 - **Edit / view modes**: a "Customize" mode for arranging widgets, and a clean "view" mode for daily use. On small screens it stays in view mode.
 - **To-do list widget**: add tasks, check them off, see a live remaining count.
 - **Priority matrix widget**: a 2x2 Eisenhower-style matrix (urgent/important quadrants) for sorting tasks by priority.
 - **Sticky note widget**: a free-text ruled notepad for quick notes.
 - **Pomodoro timer widget**: configurable focus/break lengths with a running countdown.
+- **Timer widget**: a continuous productivity stopwatch: start it and it runs until you press stop. It also logs your hours per day and shows a Mon-Sun breakdown for the current week (with a weekly total), so you can see e.g. Monday 7.5 h, Tuesday 5.4 h at a glance. A running timer survives page reloads and accidental tab closes; it keeps counting and the closed time is credited to your weekly hours.
 - **Class schedule widget**: a simple time-sorted list of the day's events/classes.
 - **Quick links widget**: shortcuts to frequently used sites (e.g. Gmail, Calendar, Drive).
 - **Calendar widget**: a monthly calendar with day selection and dot markers, which automatically pulls in dates from your deadlines.
@@ -50,6 +51,7 @@ I made this app with Claude, few choices worth calling out:
 - **Export / import backup**: save your whole dashboard to a JSON file and restore it later or on another machine.
 - **Clock, countdown, and "new year" widgets**: a live clock, a configurable countdown to any date, and a running countdown to next New Year.
 - **Editable dashboard title**: rename the dashboard inline.
-- **Autosave**: all widget data and layout persist to `localStorage`, with a subtle "saved" indicator.
+- **Autosave**: all widget data and layout persist to `localStorage`, with a subtle "saved" indicator. Saves are debounced, and the app also flushes state immediately when the tab is hidden or closed so the last edit is never lost.
+- **Delete confirmations**: deleting a task, daily, event, deadline, or link asks "are you sure" first, so a stray click can't wipe something out. This can be turned off with the "Ask before deleting items" checkbox in customize mode (the preference is saved).
 - **Reset to default**: one-click reset back to the starter layout/content.
 - **Responsive fallback**: customize/drag mode is disabled on narrow screens to avoid a broken mobile editing experience; the dashboard still renders and functions in view mode.
