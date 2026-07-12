@@ -2,6 +2,8 @@
 
 A single-file, browser-based student dashboard. It started as a to-do list and grew into a small customizable workspace: a drag-and-drop grid of widgets (to-do, priority matrix, pomodoro timer, class schedule, quick links, clock, and a couple of countdowns) that autosaves to your browser.
 
+<img width="1920" height="1080" alt="Screenshot 2026-07-11 172321" src="https://github.com/user-attachments/assets/b321c2d5-634b-4883-8e9b-448e964c7080" />
+
 Open `StudentDashboard.html` in any modern browser and it just works. No install, no server, no build step.
 
 ## Tech stack
