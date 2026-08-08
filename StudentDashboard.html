@@ -7,7 +7,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23D97757'/%3E%3Cpath d='M9 9h6v6H9zM17 9h6v6h-6zM9 17h6v6H9zM17 17h6v6h-6z' fill='%23FAF9F5'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Orbitron:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ============ tokens ============ */
 :root{
@@ -33,6 +33,55 @@
   --serif:'Lora', Georgia, 'Iowan Old Style', 'Times New Roman', serif;
   --sans:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
 }
+
+/* ============ dark sci-fi theme ============ */
+html[data-theme="dark"]{color-scheme:dark}
+html[data-theme="dark"] body{
+  --bg:#031f1f;            /* deep teal-black */
+  --panel:#06282a;         /* card, faint lift off bg */
+  --panel-2:#061016;       /* recessed / true near-black */
+  --ink:#d9f3f0;           /* pale teal-white text */
+  --soft:#9fcac4;
+  --muted:#5f8f8a;
+  --faint:#33605c;
+  --line:#0d3a3a;
+  --line-2:#134f4c;
+  --accent:#4db6b0;        /* signature teal */
+  --accent-deep:#3a8f8a;
+  --accent-soft:#0a3634;
+  --green:#5fd0a8; --green-soft:#07302a;
+  --amber:#e0b15c; --amber-soft:#2e2410;
+  --blue:#5fa8d0; --blue-soft:#0a2a38;
+  --danger:#ef6d63;
+  --shadow-1:0 1px 2px rgba(0,0,0,.35), 0 4px 14px rgba(0,0,0,.35);
+  --shadow-2:0 4px 10px rgba(0,0,0,.45), 0 16px 38px rgba(0,0,0,.55);
+  --serif:'Orbitron', 'Lora', Georgia, serif;
+}
+/* Orbitron is wide/geometric with no italic; tighten negative tracking that
+   was tuned for Lora, and keep the quote widget on Lora so its italic style
+   still renders correctly. */
+html[data-theme="dark"] .dash-title{letter-spacing:.4px}
+html[data-theme="dark"] .tm-time,
+html[data-theme="dark"] .ct-main,
+html[data-theme="dark"] .y27-num,
+html[data-theme="dark"] .pm-time{letter-spacing:0}
+html[data-theme="dark"] .qt-text{font-family:'Lora', Georgia, serif}
+html[data-theme="dark"] body{
+  background:
+    radial-gradient(1200px 500px at 12% -10%, rgba(77,182,176,.08), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgba(77,182,176,.05), transparent 55%),
+    var(--bg);
+}
+html[data-theme="dark"] .topbar{background:rgba(3,31,31,.86)}
+html[data-theme="dark"] .tray{background:linear-gradient(to bottom, #05201f, #041717)}
+html[data-theme="dark"] .logo{box-shadow:inset 0 -2px 0 rgba(0,0,0,.35)}
+html[data-theme="dark"] .btn.primary{color:#04211f}
+html[data-theme="dark"] ::-webkit-scrollbar-thumb{background:var(--line-2)}
+html[data-theme="dark"] .canvas > .ghost{background:var(--accent-soft)}
+#themeBtn .i-sun{display:none}
+#themeBtn .i-moon{display:inline-flex}
+html[data-theme="dark"] #themeBtn .i-sun{display:inline-flex}
+html[data-theme="dark"] #themeBtn .i-moon{display:none}
 *{box-sizing:border-box; margin:0; padding:0}
 [hidden]{display:none !important}
 html{color-scheme:light}
@@ -538,6 +587,10 @@ body[data-mode="edit"] .w-resize{display:block}
   </div>
   <div class="top-actions">
     <span class="saved" id="savedFlag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>Saved</span>
+    <button class="btn ghost sm" id="themeBtn" aria-label="Toggle dark theme" title="Toggle theme">
+      <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z"/></svg>
+      <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.3"/><path d="M12 2.5v3M12 18.5v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2.5 12h3M18.5 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+    </button>
     <button class="btn primary" id="modeBtn"></button>
   </div>
 </header>
@@ -658,6 +711,19 @@ const store = {
   set(k, v) { try { window.localStorage.setItem(k, v); } catch (e) { memStore[k] = v; } },
 };
 const LS_KEY = 'student-dashboard.v1';
+const THEME_KEY = 'student-dashboard.theme';
+
+/* ---------- theme (light / dark sci-fi) ---------- */
+function applyTheme(t) {
+  if (t === 'dark') document.documentElement.dataset.theme = 'dark';
+  else delete document.documentElement.dataset.theme;
+}
+function initTheme() {
+  const saved = store.get(THEME_KEY);
+  const theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  applyTheme(theme);
+}
+initTheme();
 
 /* ---------- grid constants & state ---------- */
 const COLS = 12, ROW = 72, GAP = 14;
@@ -1868,7 +1934,9 @@ const TYPES = {
       const draw = () => {
         list.innerHTML = '';
         if (!(w.data.items || []).length) list.appendChild(el('div', 'mini-empty', 'No links yet — add one below.'));
-        w.data.items.forEach((item, idx) => {
+        const sorted = (w.data.items || []).slice().sort((a, b) =>
+          (a.label || '').localeCompare(b.label || '', undefined, { sensitivity: 'base', numeric: true }));
+        sorted.forEach((item) => {
           const row = el('div', 'li');
           row.setAttribute('role', 'link');
           row.tabIndex = 0;
@@ -1879,7 +1947,7 @@ const TYPES = {
           const arr = el('span', 'arr'); arr.innerHTML = ICONS.external; arr.querySelector('svg').style.width = '12px';
           row.appendChild(arr);
           const x = el('button', 'row-x'); x.innerHTML = ICONS.x; x.setAttribute('aria-label', 'Delete link');
-          x.addEventListener('click', e => { e.stopPropagation(); confirmRowDelete('link', item.label, () => { w.data.items.splice(idx, 1); draw(); saveState(); }); });
+          x.addEventListener('click', e => { e.stopPropagation(); confirmRowDelete('link', item.label, () => { const i = w.data.items.indexOf(item); if (i > -1) w.data.items.splice(i, 1); draw(); saveState(); }); });
           row.appendChild(x);
           const open = () => window.open(norm(item.url), '_blank', 'noopener');
           row.addEventListener('click', e => { if (!e.target.closest('.row-x')) open(); });
@@ -2048,6 +2116,11 @@ confirmToggle.checked = state.confirmDeletes !== false;
 confirmToggle.addEventListener('change', () => { state.confirmDeletes = confirmToggle.checked; saveState(); });
 
 $('#modeBtn').addEventListener('click', () => setMode(mode === 'edit' ? 'view' : 'edit'));
+$('#themeBtn').addEventListener('click', () => {
+  const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+  store.set(THEME_KEY, next);
+});
 $('#emptyBtn').addEventListener('click', () => setMode('edit'));
 $('#resetBtn').addEventListener('click', () => openModal({
   title: 'Reset dashboard?',
