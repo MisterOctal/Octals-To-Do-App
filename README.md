@@ -33,6 +33,7 @@ I made this app with Claude, few choices worth calling out:
 - **No frameworks.** The app's complexity is small enough that a framework would add overhead (build step, dependencies, bundle size) without real benefit. Vanilla JS keeps it fast and keeps the single-file approach possible.
 - **`localStorage` instead of a backend/database.** This is a personal, local-first tool. There's no login system and nothing that needs to sync across devices, so a server would be unnecessary complexity.
 - **A widget-grid system instead of a fixed layout.** Different people want different things visible, so the dashboard lets you add, remove, resize, and rearrange widgets rather than hardcoding one layout.
+- **Multi-theme customization.** The app evolved from a simple dark/light toggle to a named theme system, allowing users to choose between a clean light mode, a high-contrast "ITS" dark mode, a "Sci-fi teal" mode, and a soft "Claude-inspired" palette.
 
 ## Features
 
@@ -42,13 +43,14 @@ I made this app with Claude, few choices worth calling out:
 - **Priority matrix widget**: a 2x2 Eisenhower-style matrix (urgent/important quadrants) for sorting tasks by priority.
 - **Sticky note widget**: a free-text ruled notepad for quick notes.
 - **Pomodoro timer widget**: configurable focus/break lengths with a running countdown.
-- **Timer widget**: a continuous productivity stopwatch: start it and it runs until you press stop. It also logs your hours per day and shows a Mon-Sun breakdown for the current week (with a weekly total), so you can see e.g. Monday 7.5 h, Tuesday 5.4 h at a glance. A running timer survives page reloads and accidental tab closes; it keeps counting and the closed time is credited to your weekly hours.
+- **Timer widget**: a continuous productivity stopwatch: start it and it runs until you press stop. It also logs your hours per day and shows a Mon-Sun breakdown for the current week (with a weekly total), so you can see e.g. Monday 7.5 h, Tuesday 5.4 h at a glance. Hovering over the weekly summary reveals a basic visual bar chart of your progress. A running timer survives page reloads and accidental tab closes; it keeps counting and the closed time is credited to your weekly hours.
 - **Class schedule widget**: a simple time-sorted list of the day's events/classes.
 - **Quick links widget**: shortcuts to frequently used sites (e.g. Gmail, Calendar, Drive).
 - **Calendar widget**: a monthly calendar with day selection and dot markers, which automatically pulls in dates from your deadlines.
 - **Deadlines widget**: track upcoming due dates with names and dates, sorted by how soon they're due.
 - **Dailies widget**: a daily habit tracker with running streaks and a "best streak" record for each habit.
-- **Daily quote widget**: a small motivational quote that changes every day.
+- **Water tracking widget**: track your daily water intake with a customizable goal and a quick-add button.
+- **Daily quote widget**: a curated library of over 100 motivational and philosophical quotes to start your day.
 - **Widget settings**: a per-widget settings panel for configuring individual widgets.
 - **Export / import backup**: save your whole dashboard to a JSON file and restore it later or on another machine.
 - **Clock, countdown, and "new year" widgets**: a live clock, a configurable countdown to any date, and a running countdown to next New Year.

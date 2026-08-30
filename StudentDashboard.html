@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Student Dashboard</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23D97757'/%3E%3Cpath d='M9 9h6v6H9zM17 9h6v6h-6zM9 17h6v6H9zM17 17h6v6h-6z' fill='%23FAF9F5'/%3E%3C/svg%3E">
+<link rel="icon" href="Logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Orbitron:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -34,9 +34,9 @@
   --sans:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
 }
 
-/* ============ dark sci-fi theme ============ */
-html[data-theme="dark"]{color-scheme:dark}
-html[data-theme="dark"] body{
+/* ============ themes ============ */
+html[data-theme="scifi"]{color-scheme:dark}
+html[data-theme="scifi"] body{
   --bg:#031f1f;            /* deep teal-black */
   --panel:#06282a;         /* card, faint lift off bg */
   --panel-2:#061016;       /* recessed / true near-black */
@@ -57,31 +57,107 @@ html[data-theme="dark"] body{
   --shadow-2:0 4px 10px rgba(0,0,0,.45), 0 16px 38px rgba(0,0,0,.55);
   --serif:'Orbitron', 'Lora', Georgia, serif;
 }
-/* Orbitron is wide/geometric with no italic; tighten negative tracking that
-   was tuned for Lora, and keep the quote widget on Lora so its italic style
-   still renders correctly. */
-html[data-theme="dark"] .dash-title{letter-spacing:.4px}
-html[data-theme="dark"] .tm-time,
-html[data-theme="dark"] .ct-main,
-html[data-theme="dark"] .y27-num,
-html[data-theme="dark"] .pm-time{letter-spacing:0}
-html[data-theme="dark"] .qt-text{font-family:'Lora', Georgia, serif}
-html[data-theme="dark"] body{
+html[data-theme="scifi"] .dash-title{letter-spacing:.4px}
+html[data-theme="scifi"] .tm-time,
+html[data-theme="scifi"] .ct-main,
+html[data-theme="scifi"] .y27-num,
+html[data-theme="scifi"] .pm-time{letter-spacing:0}
+html[data-theme="scifi"] .qt-text{font-family:'Lora', Georgia, serif}
+html[data-theme="scifi"] body{
   background:
     radial-gradient(1200px 500px at 12% -10%, rgba(77,182,176,.08), transparent 60%),
     radial-gradient(900px 500px at 100% 0%, rgba(77,182,176,.05), transparent 55%),
     var(--bg);
 }
-html[data-theme="dark"] .topbar{background:rgba(3,31,31,.86)}
-html[data-theme="dark"] .tray{background:linear-gradient(to bottom, #05201f, #041717)}
-html[data-theme="dark"] .logo{box-shadow:inset 0 -2px 0 rgba(0,0,0,.35)}
-html[data-theme="dark"] .btn.primary{color:#04211f}
-html[data-theme="dark"] ::-webkit-scrollbar-thumb{background:var(--line-2)}
-html[data-theme="dark"] .canvas > .ghost{background:var(--accent-soft)}
-#themeBtn .i-sun{display:none}
-#themeBtn .i-moon{display:inline-flex}
-html[data-theme="dark"] #themeBtn .i-sun{display:inline-flex}
-html[data-theme="dark"] #themeBtn .i-moon{display:none}
+html[data-theme="scifi"] .topbar{background:rgba(3,31,31,.86)}
+html[data-theme="scifi"] .tray{background:linear-gradient(to bottom, #05201f, #041717)}
+html[data-theme="scifi"] .logo{box-shadow:inset 0 -2px 0 rgba(0,0,0,.35)}
+html[data-theme="scifi"] .btn.primary{color:#04211f}
+html[data-theme="scifi"] ::-webkit-scrollbar-thumb{background:var(--line-2)}
+html[data-theme="scifi"] .canvas > .ghost{background:var(--accent-soft)}
+
+html[data-theme="its-light"]{color-scheme:light}
+html[data-theme="its-light"] body{
+  --bg:#f2f2f2;
+  --panel:#ffffff;
+  --panel-2:#e8e8e8;
+  --ink:#0b0f13;
+  --soft:#4b5a64;
+  --muted:#7a8a94;
+  --faint:#a0aeb5;
+  --line:#d1d5db;
+  --line-2:#bcc0c7;
+  --accent:#e05a5a;
+  --accent-deep:#b84a4a;
+  --accent-soft:#fbeaea;
+  --green:#4a7e4a; --green-soft:#eaf2ea;
+  --amber:#a6863a; --amber-soft:#fbf8ea;
+  --blue:#4a7e9a; --blue-soft:#eaf2f7;
+  --danger:#b84a4a;
+  --shadow-1:0 1px 2px rgba(0,0,0,.05), 0 4px 14px rgba(0,0,0,.05);
+  --shadow-2:0 4px 10px rgba(0,0,0,.10), 0 16px 38px rgba(0,0,0,.14);
+  --serif:'Lora', Georgia, serif;
+}
+html[data-theme="its-light"] .topbar{background:rgba(242,242,242,.86)}
+html[data-theme="its-light"] .tray{background:linear-gradient(to bottom, #f2f2f2, #e8e8e8)}
+html[data-theme="its-light"] .canvas > .ghost{background:var(--accent-soft)}
+
+html[data-theme="its-dark"]{color-scheme:dark}
+html[data-theme="its-dark"] body{
+  --bg:#1a1e24;            /* Lighter gray as background */
+  --panel:#0b0f13;         /* Darker gray as foreground widget */
+  --panel-2:#05070a;       /* Even darker for recessed */
+  --ink:#f2f2f2;           /* Light gray for text */
+  --soft:#a0aeb5;
+  --muted:#7a8a94;
+  --faint:#4b5a64;
+  --line:#2a3138;
+  --line-2:#363d45;
+  --accent:#e05a5a;
+  --accent-deep:#b84a4a;
+  --accent-soft:#2d1a1a;
+  --green:#7ea67e; --green-soft:#1a241a;
+  --amber:#cda65a; --amber-soft:#242015;
+  --blue:#7ea6c6; --blue-soft:#1a202a;
+  --danger:#e05a5a;
+  --shadow-1:0 1px 2px rgba(0,0,0,.5), 0 4px 14px rgba(0,0,0,.5);
+  --shadow-2:0 4px 10px rgba(0,0,0,.6), 0 16px 38px rgba(0,0,0,.7);
+  --serif:'Lora', Georgia, serif;
+}
+html[data-theme="its-dark"] .topbar{background:rgba(26,30,36,.86)}
+html[data-theme="its-dark"] .tray{background:linear-gradient(to bottom, #1a1e24, #0b0f13)}
+html[data-theme="its-dark"] .canvas > .ghost{background:var(--accent-soft)}
+
+html[data-theme="claude"]{color-scheme:light}
+html[data-theme="claude"] body{
+  --bg:#fdfaf5;
+  --panel:#ffffff;
+  --panel-2:#f5f2ea;
+  --ink:#3a3a3a;
+  --soft:#6a6a6a;
+  --muted:#9a9a9a;
+  --faint:#cacaca;
+  --line:#eeeae3;
+  --line-2:#e5e1d8;
+  --accent:#8e7cc3;
+  --accent-deep:#7a68b0;
+  --accent-soft:#f4f1fa;
+  --green:#7ca87c; --green-soft:#f2f7f2;
+  --amber:#cda65a; --amber-soft:#fdf8ee;
+  --blue:#8da7c6; --blue-soft:#f0f4f8;
+  --danger:#d9534f;
+  --shadow-1:0 1px 3px rgba(0,0,0,.05), 0 4px 12px rgba(0,0,0,.05);
+  --shadow-2:0 4px 10px rgba(0,0,0,.08), 0 16px 32px rgba(0,0,0,.12);
+  --serif:'Lora', serif;
+}
+
+#themeSelect{
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 24px;
+}
 *{box-sizing:border-box; margin:0; padding:0}
 [hidden]{display:none !important}
 html{color-scheme:light}
@@ -171,6 +247,16 @@ input,textarea,select{font:inherit; color:inherit}
 .tm-d.today{background:var(--accent-soft)}
 .tm-d.today b{color:var(--accent-deep)}
 .tm-d.zero b{color:var(--faint)}
+
+.tm-hover-chart{
+  position:fixed; z-index:1000; background:var(--panel); border:1px solid var(--line);
+  border-radius:10px; padding:8px; box-shadow:var(--shadow-2);
+  display:flex; align-items:flex-end; gap:4px; pointer-events:none;
+}
+.tm-hover-bar{
+  background:var(--accent); width:6px; border-radius:3px 3px 0 0;
+  transition:height .2s ease;
+}
 
 /* ============ widget tray (customize) ============ */
 .tray{
@@ -587,10 +673,13 @@ body[data-mode="edit"] .w-resize{display:block}
   </div>
   <div class="top-actions">
     <span class="saved" id="savedFlag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>Saved</span>
-    <button class="btn ghost sm" id="themeBtn" aria-label="Toggle dark theme" title="Toggle theme">
-      <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z"/></svg>
-      <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.3"/><path d="M12 2.5v3M12 18.5v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2.5 12h3M18.5 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
-    </button>
+    <select id="themeSelect" class="btn ghost sm" aria-label="Select theme" title="Change theme">
+      <option value="light">Claude (Default)</option>
+      <option value="scifi">Sci-fi Teal</option>
+      <option value="its-light">ITS-inspired (Light)</option>
+      <option value="its-dark">ITS-inspired (Dark)</option>
+      <option value="claude">Lavender Light</option>
+    </select>
     <button class="btn primary" id="modeBtn"></button>
   </div>
 </header>
@@ -698,6 +787,9 @@ const ICONS = {
   cal:      I('<rect x="4" y="5.5" width="16" height="15" rx="2.5"/><path d="M4 10h16M8.5 3.5v3.5M15.5 3.5v3.5"/><circle cx="12" cy="15" r="1.4" fill="currentColor" stroke="none"/>'),
   target:   I('<circle cx="12" cy="12" r="8.2"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/>'),
   quote:    I('<path d="M9.8 7.2C7.3 8.3 6 10.3 6 13v3.8h4.8V12H8.2c.2-1.5 1-2.6 2.4-3.3z"/><path d="M19 7.2c-2.5 1.1-3.8 3.1-3.8 5.8v3.8H20V12h-2.6c.2-1.5 1-2.6 2.4-3.3z"/>'),
+  analytics: I('<path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/>'),
+  wellness:  I('<path d="M12 2.69l5.4 1 a.5.5 0 0 1 .38.61l-7.8 12.41a.5.5 0 0 1-1.01 0l-7.8-12.41a.5.5 0 0 1 .38-.61L12 2.69z"/>'),
+  sound:     I('<path d="M12 5v14M5 12h14M12 2v3M12 19v3M2 12h3M19 12h3"/>'),
   chevL:    I('<path d="M14.5 5.5L8 12l6.5 6.5"/>'),
   chevR:    I('<path d="M9.5 5.5L16 12l-6.5 6.5"/>'),
   stopwatch:I('<circle cx="12" cy="13.5" r="7"/><path d="M12 9.8v3.7l2.6 1.6M9.8 3.2h4.4M12 3.2v3.3M18.3 7.2l1.5-1.5"/>'),
@@ -715,13 +807,15 @@ const THEME_KEY = 'student-dashboard.theme';
 
 /* ---------- theme (light / dark sci-fi) ---------- */
 function applyTheme(t) {
-  if (t === 'dark') document.documentElement.dataset.theme = 'dark';
-  else delete document.documentElement.dataset.theme;
+  if (t === 'light') delete document.documentElement.dataset.theme;
+  else document.documentElement.dataset.theme = t;
 }
 function initTheme() {
   const saved = store.get(THEME_KEY);
-  const theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  const theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'scifi' : 'light');
   applyTheme(theme);
+  const sel = $('#themeSelect');
+  if (sel) sel.value = theme;
 }
 initTheme();
 
@@ -1441,6 +1535,32 @@ const TYPES = {
         this.paint(body, w);
       });
       this.paint(body, w);
+
+      const weekEl = body.querySelector('.tm-week');
+      weekEl.style.position = 'relative';
+      weekEl.addEventListener('mousemove', (e) => {
+        let chart = document.body.querySelector('.tm-hover-chart');
+        if (!chart) {
+          chart = el('div', 'tm-hover-chart');
+          document.body.appendChild(chart);
+        }
+        chart.style.left = e.clientX + 'px';
+        chart.style.top = (e.clientY - 50) + 'px';
+        const keys = this.weekKeys();
+        const hours = keys.map(k => (w.data.log[k] || 0) / 3600);
+        const max = Math.max(1, ...hours);
+        chart.innerHTML = '';
+        keys.forEach((k, i) => {
+          const bar = el('div', 'tm-hover-bar');
+          bar.style.height = (hours[i] / max * 40) + 'px';
+          bar.title = `${fromKey(k).toLocaleDateString(undefined, { weekday: 'short' })}: ${hours[i].toFixed(1)}h`;
+          chart.appendChild(bar);
+        });
+      });
+      weekEl.addEventListener('mouseleave', () => {
+        const chart = document.body.querySelector('.tm-hover-chart');
+        if (chart) chart.remove();
+      });
     },
     credit(w) {                                       // add elapsed-since-last-mark to the log, split across days
       if (!w.data.last) return;
@@ -1494,6 +1614,91 @@ const TYPES = {
       saveState();
       this.paint(body, w);
     },
+  },
+
+  analytics: {
+    label: 'Study Analytics', desc: 'Weekly study hours visualization.',
+    icon: ICONS.analytics, defW: 4, defH: 3, minW: 3, minH: 2,
+    defData: () => ({}),
+    render(body, w) {
+      body.innerHTML = `
+        <div class="tm">
+          <div class="tm-week-title" style="margin-bottom:15px"><b>Weekly Progress</b></div>
+          <div class="tm-days" style="align-items:flex-end; height:80px; gap:8px"></div>
+          <div class="tm-total" style="margin-top:12px; font-size:12px; text-align:center; color:var(--muted)"></div>
+        </div>`;
+      this.paint(body, w);
+    },
+    paint(body, w) {
+      const timerWidget = state.widgets.find(x => x.type === 'timer');
+      const days = body.querySelector('.tm-days');
+      days.innerHTML = '';
+      const log = timerWidget ? timerWidget.data.log : {};
+      const keys = TYPES.timer.weekKeys();
+      let total = 0;
+      const hoursPerDay = keys.map(k => (log[k] || 0) / 3600);
+      const maxHours = Math.max(1, ...hoursPerDay);
+      keys.forEach((k, i) => {
+        const s = log[k] || 0;
+        total += s;
+        const h = s / 3600;
+        const pct = (h / maxHours) * 100;
+        const d = el('div', 'tm-d');
+        d.style.flex = '1';
+        d.style.background = 'var(--panel-2)';
+        d.style.position = 'relative';
+        d.style.display = 'flex';
+        d.style.flexDirection = 'column';
+        d.style.justifyContent = 'flex-end';
+        const bar = el('div', 'bar');
+        bar.style.width = '100%';
+        bar.style.height = `${pct}%`;
+        bar.style.background = 'var(--accent)';
+        bar.style.borderRadius = '4px 4px 0 0';
+        const label = el('span', null, fromKey(k).toLocaleDateString(undefined, { weekday: 'short' }).slice(0, 2));
+        label.style.fontSize = '9px';
+        label.style.textAlign = 'center';
+        label.style.marginTop = '4px';
+        d.append(bar, label);
+        days.appendChild(d);
+      });
+      body.querySelector('.tm-total').textContent = `${(total / 3600).toFixed(1)} h total this week`;
+    },
+    tick(body, w) { this.paint(body, w); }
+  },
+
+  wellness: {
+    label: 'Water', desc: 'Track daily water intake.',
+    icon: ICONS.wellness, defW: 3, defH: 3, minW: 2, minH: 2,
+    defData: () => ({ glasses: 0, goal: 8 }),
+    settings: w => [
+      { key: 'goal', label: 'Daily goal (glasses)', input: 'number', value: w.data.goal, min: 1, max: 50 },
+    ],
+    render(body, w) {
+      body.innerHTML = `
+        <div class="pomo" style="gap:15px">
+          <div class="pm-time" style="font-size:32px">${w.data.glasses} / ${w.data.goal}</div>
+          <div class="tm-week-title" style="text-transform:none; letter-spacing:0">Glasses of water</div>
+          <div class="pm-ctl">
+            <button class="btn primary sm" id="addWater">+ Add Glass</button>
+            <button class="btn ghost sm" id="resetWater">Reset</button>
+          </div>
+        </div>`;
+      body.querySelector('#addWater').addEventListener('click', () => {
+        w.data.glasses++;
+        this.paint(body, w);
+        saveState();
+      });
+      body.querySelector('#resetWater').addEventListener('click', () => {
+        w.data.glasses = 0;
+        this.paint(body, w);
+        saveState();
+      });
+      this.paint(body, w);
+    },
+    paint(body, w) {
+      body.querySelector('.pm-time').textContent = `${w.data.glasses} / ${w.data.goal}`;
+    }
   },
 
   /* ---- schedule ---- */
@@ -1895,6 +2100,36 @@ const TYPES = {
       ["Do not wait to strike till the iron is hot; make it hot by striking.", "W. B. Yeats"],
       ["Do what you can, with what you have, where you are.", "Theodore Roosevelt"],
       ["Genius is one percent inspiration, ninety-nine percent perspiration.", "Thomas Edison"],
+      ["The only way to do great work is to love what you do.", "Steve Jobs"],
+      ["It always seems impossible until it's done.", "Nelson Mandela"],
+      ["Believe you can and you're halfway there.", "Theodore Roosevelt"],
+      ["The future depends on what you do today.", "Mahatma Gandhi"],
+      ["Everything you've ever wanted is on the other side of fear.", "George Addair"],
+      ["Don't let yesterday take up too much of today.", "Will Rogers"],
+      ["The secret of getting ahead is getting started.", "Mark Twain"],
+      ["Hardships often prepare ordinary people for an extraordinary destiny.", "C.S. Lewis"],
+      ["Dream big and dare to fail.", "Norman Vaughan"],
+      ["The only limit to our realization of tomorrow will be our doubts of today.", "Franklin D. Roosevelt"],
+      ["What you get by achieving your goals is not as important as what you become by achieving your goals.", "Zig Ziglar"],
+      ["Act as if what you do makes a difference. It does.", "William James"],
+      ["Success is not final, failure is not fatal: it is the courage to continue that counts.", "Winston Churchill"],
+      ["Your time is limited, so don't waste it living someone else's life.", "Steve Jobs"],
+      ["The best way to predict the future is to create it.", "Peter Drucker"],
+      ["Small deeds done are better than great deeds planned.", "Peter Marshall"],
+      ["If you want to lift yourself up, lift up someone else.", "Booker T. Washington"],
+      ["Everything has beauty, but not everyone sees it.", "Confucius"],
+      ["The mind is everything. What you think you become.", "Buddha"],
+      ["Do one thing every day that scares you.", "Eleanor Roosevelt"],
+      ["It is never too late to be what you might have been.", "George Eliot"],
+      ["Focus on the journey, not the destination.", "Unknown"],
+      ["Stay hungry, stay foolish.", "Steve Jobs"],
+      ["Action is the foundational key to all success.", "Pablo Picasso"],
+      ["The only place where success comes before work is in the dictionary.", "Vidal Sassoon"],
+      ["The expert in anything was once a beginner.", "Helen Hayes"],
+      ["Keep your face always toward the sunshine - and shadows will fall behind you.", "Walt Whitman"],
+      ["Whatever you are, be a good one.", "Abraham Lincoln"],
+      ["The only thing we have to fear is fear itself.", "Franklin D. Roosevelt"],
+      ["Life is what happens when you're busy making other plans.", "John Lennon"],
     ],
     render(body, w) {
       if (!w.run) w.run = { off: 0 };
@@ -1968,7 +2203,7 @@ const TYPES = {
     },
   },
 };
-const TYPE_ORDER = ['clock', 'countdown', 'y2027', 'calendar', 'schedule', 'dailies', 'deadlines', 'todo', 'matrix', 'note', 'pomo', 'timer', 'links', 'quote'];
+const TYPE_ORDER = ['clock', 'countdown', 'y2027', 'calendar', 'schedule', 'dailies', 'deadlines', 'todo', 'matrix', 'note', 'pomo', 'timer', 'wellness', 'links', 'quote'];
 
 /* ================================================================
    SETTINGS MODAL
@@ -2116,8 +2351,8 @@ confirmToggle.checked = state.confirmDeletes !== false;
 confirmToggle.addEventListener('change', () => { state.confirmDeletes = confirmToggle.checked; saveState(); });
 
 $('#modeBtn').addEventListener('click', () => setMode(mode === 'edit' ? 'view' : 'edit'));
-$('#themeBtn').addEventListener('click', () => {
-  const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+$('#themeSelect').addEventListener('change', () => {
+  const next = $('#themeSelect').value;
   applyTheme(next);
   store.set(THEME_KEY, next);
 });
