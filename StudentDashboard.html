@@ -37,38 +37,12 @@
 /* ============ themes ============ */
 html[data-theme="scifi"]{color-scheme:dark}
 html[data-theme="scifi"] body{
-  --bg:#031f1f;            /* deep teal-black */
-  --panel:#06282a;         /* card, faint lift off bg */
-  --panel-2:#061016;       /* recessed / true near-black */
-  --ink:#d9f3f0;           /* pale teal-white text */
-  --soft:#9fcac4;
-  --muted:#5f8f8a;
-  --faint:#33605c;
-  --line:#0d3a3a;
-  --line-2:#134f4c;
-  --accent:#4db6b0;        /* signature teal */
-  --accent-deep:#3a8f8a;
-  --accent-soft:#0a3634;
-  --green:#5fd0a8; --green-soft:#07302a;
-  --amber:#e0b15c; --amber-soft:#2e2410;
-  --blue:#5fa8d0; --blue-soft:#0a2a38;
-  --danger:#ef6d63;
-  --shadow-1:0 1px 2px rgba(0,0,0,.35), 0 4px 14px rgba(0,0,0,.35);
-  --shadow-2:0 4px 10px rgba(0,0,0,.45), 0 16px 38px rgba(0,0,0,.55);
-  --serif:'Orbitron', 'Lora', Georgia, serif;
+  --bg:#031f1f; --panel:#06282a; --panel-2:#061016; --ink:#d9f3f0; --soft:#9fcac4; --muted:#5f8f8a; --faint:#33605c; --line:#0d3a3a; --line-2:#134f4c; --accent:#4db6b0; --accent-deep:#3a8f8a; --accent-soft:#0a3634; --green:#5fd0a8; --green-soft:#07302a; --amber:#e0b15c; --amber-soft:#2e2410; --blue:#5fa8d0; --blue-soft:#0a2a38; --danger:#ef6d63; --shadow-1:0 1px 2px rgba(0,0,0,.35), 0 4px 14px rgba(0,0,0,.35); --shadow-2:0 4px 10px rgba(0,0,0,.45), 0 16px 38px rgba(0,0,0,.55); --serif:'Orbitron', 'Lora', Georgia, serif;
 }
 html[data-theme="scifi"] .dash-title{letter-spacing:.4px}
-html[data-theme="scifi"] .tm-time,
-html[data-theme="scifi"] .ct-main,
-html[data-theme="scifi"] .y27-num,
-html[data-theme="scifi"] .pm-time{letter-spacing:0}
+html[data-theme="scifi"] .tm-time, html[data-theme="scifi"] .ct-main, html[data-theme="scifi"] .y27-num, html[data-theme="scifi"] .pm-time{letter-spacing:0}
 html[data-theme="scifi"] .qt-text{font-family:'Lora', Georgia, serif}
-html[data-theme="scifi"] body{
-  background:
-    radial-gradient(1200px 500px at 12% -10%, rgba(77,182,176,.08), transparent 60%),
-    radial-gradient(900px 500px at 100% 0%, rgba(77,182,176,.05), transparent 55%),
-    var(--bg);
-}
+html[data-theme="scifi"] body{background:radial-gradient(1200px 500px at 12% -10%, rgba(77,182,176,.08), transparent 60%),radial-gradient(900px 500px at 100% 0%, rgba(77,182,176,.05), transparent 55%),var(--bg)}
 html[data-theme="scifi"] .topbar{background:rgba(3,31,31,.86)}
 html[data-theme="scifi"] .tray{background:linear-gradient(to bottom, #05201f, #041717)}
 html[data-theme="scifi"] .logo{box-shadow:inset 0 -2px 0 rgba(0,0,0,.35)}
@@ -78,25 +52,7 @@ html[data-theme="scifi"] .canvas > .ghost{background:var(--accent-soft)}
 
 html[data-theme="its-light"]{color-scheme:light}
 html[data-theme="its-light"] body{
-  --bg:#f2f2f2;
-  --panel:#ffffff;
-  --panel-2:#e8e8e8;
-  --ink:#0b0f13;
-  --soft:#4b5a64;
-  --muted:#7a8a94;
-  --faint:#a0aeb5;
-  --line:#d1d5db;
-  --line-2:#bcc0c7;
-  --accent:#e05a5a;
-  --accent-deep:#b84a4a;
-  --accent-soft:#fbeaea;
-  --green:#4a7e4a; --green-soft:#eaf2ea;
-  --amber:#a6863a; --amber-soft:#fbf8ea;
-  --blue:#4a7e9a; --blue-soft:#eaf2f7;
-  --danger:#b84a4a;
-  --shadow-1:0 1px 2px rgba(0,0,0,.05), 0 4px 14px rgba(0,0,0,.05);
-  --shadow-2:0 4px 10px rgba(0,0,0,.10), 0 16px 38px rgba(0,0,0,.14);
-  --serif:'Lora', Georgia, serif;
+  --bg:#f2f2f2; --panel:#ffffff; --panel-2:#e8e8e8; --ink:#0b0f13; --soft:#4b5a64; --muted:#7a8a94; --faint:#a0aeb5; --line:#d1d5db; --line-2:#bcc0c7; --accent:#e05a5a; --accent-deep:#b84a4a; --accent-soft:#fbeaea; --green:#4a7e4a; --green-soft:#eaf2ea; --amber:#a6863a; --amber-soft:#fbf8ea; --blue:#4a7e9a; --blue-soft:#eaf2f7; --danger:#b84a4a; --shadow-1:0 1px 2px rgba(0,0,0,.05), 0 4px 14px rgba(0,0,0,.05); --shadow-2:0 4px 10px rgba(0,0,0,.10), 0 16px 38px rgba(0,0,0,.14); --serif:'Lora', Georgia, serif;
 }
 html[data-theme="its-light"] .topbar{background:rgba(242,242,242,.86)}
 html[data-theme="its-light"] .tray{background:linear-gradient(to bottom, #f2f2f2, #e8e8e8)}
@@ -104,25 +60,7 @@ html[data-theme="its-light"] .canvas > .ghost{background:var(--accent-soft)}
 
 html[data-theme="its-dark"]{color-scheme:dark}
 html[data-theme="its-dark"] body{
-  --bg:#1a1e24;            /* Lighter gray as background */
-  --panel:#0b0f13;         /* Darker gray as foreground widget */
-  --panel-2:#05070a;       /* Even darker for recessed */
-  --ink:#f2f2f2;           /* Light gray for text */
-  --soft:#a0aeb5;
-  --muted:#7a8a94;
-  --faint:#4b5a64;
-  --line:#2a3138;
-  --line-2:#363d45;
-  --accent:#e05a5a;
-  --accent-deep:#b84a4a;
-  --accent-soft:#2d1a1a;
-  --green:#7ea67e; --green-soft:#1a241a;
-  --amber:#cda65a; --amber-soft:#242015;
-  --blue:#7ea6c6; --blue-soft:#1a202a;
-  --danger:#e05a5a;
-  --shadow-1:0 1px 2px rgba(0,0,0,.5), 0 4px 14px rgba(0,0,0,.5);
-  --shadow-2:0 4px 10px rgba(0,0,0,.6), 0 16px 38px rgba(0,0,0,.7);
-  --serif:'Lora', Georgia, serif;
+  --bg:#1a1e24; --panel:#0b0f13; --panel-2:#05070a; --ink:#f2f2f2; --soft:#a0aeb5; --muted:#7a8a94; --faint:#4b5a64; --line:#2a3138; --line-2:#363d45; --accent:#e05a5a; --accent-deep:#b84a4a; --accent-soft:#2d1a1a; --green:#7ea67e; --green-soft:#1a241a; --amber:#cda65a; --amber-soft:#242015; --blue:#7ea6c6; --blue-soft:#1a202a; --danger:#e05a5a; --shadow-1:0 1px 2px rgba(0,0,0,.5), 0 4px 14px rgba(0,0,0,.5); --shadow-2:0 4px 10px rgba(0,0,0,.6), 0 16px 38px rgba(0,0,0,.7); --serif:'Lora', Georgia, serif;
 }
 html[data-theme="its-dark"] .topbar{background:rgba(26,30,36,.86)}
 html[data-theme="its-dark"] .tray{background:linear-gradient(to bottom, #1a1e24, #0b0f13)}
@@ -130,25 +68,7 @@ html[data-theme="its-dark"] .canvas > .ghost{background:var(--accent-soft)}
 
 html[data-theme="claude"]{color-scheme:light}
 html[data-theme="claude"] body{
-  --bg:#fdfaf5;
-  --panel:#ffffff;
-  --panel-2:#f5f2ea;
-  --ink:#3a3a3a;
-  --soft:#6a6a6a;
-  --muted:#9a9a9a;
-  --faint:#cacaca;
-  --line:#eeeae3;
-  --line-2:#e5e1d8;
-  --accent:#8e7cc3;
-  --accent-deep:#7a68b0;
-  --accent-soft:#f4f1fa;
-  --green:#7ca87c; --green-soft:#f2f7f2;
-  --amber:#cda65a; --amber-soft:#fdf8ee;
-  --blue:#8da7c6; --blue-soft:#f0f4f8;
-  --danger:#d9534f;
-  --shadow-1:0 1px 3px rgba(0,0,0,.05), 0 4px 12px rgba(0,0,0,.05);
-  --shadow-2:0 4px 10px rgba(0,0,0,.08), 0 16px 32px rgba(0,0,0,.12);
-  --serif:'Lora', serif;
+  --bg:#fdfaf5; --panel:#ffffff; --panel-2:#f5f2ea; --ink:#3a3a3a; --soft:#6a6a6a; --muted:#9a9a9a; --faint:#cacaca; --line:#eeeae3; --line-2:#e5e1d8; --accent:#8e7cc3; --accent-deep:#7a68b0; --accent-soft:#f4f1fa; --green:#7ca87c; --green-soft:#f2f7f2; --amber:#cda65a; --amber-soft:#fdf8ee; --blue:#8da7c6; --blue-soft:#f0f4f8; --danger:#d9534f; --shadow-1:0 1px 3px rgba(0,0,0,.05), 0 4px 12px rgba(0,0,0,.05); --shadow-2:0 4px 10px rgba(0,0,0,.08), 0 16px 32px rgba(0,0,0,.12); --serif:'Lora', serif;
 }
 
 #themeSelect{
@@ -733,6 +653,31 @@ const el = (tag, cls, text) => {
   if (text !== undefined) n.textContent = text;
   return n;
 };
+const makeAddRow = (body, fields, onAdd) => {
+  const div = el('div', 'todo-add');
+  const ins = fields.map(f => {
+    const i = el('input', f.cls);
+    i.type = f.type || 'text';
+    i.placeholder = f.ph;
+    if (f.max) i.maxLength = f.max;
+    if (f.aria) i.setAttribute('aria-label', f.aria);
+    div.appendChild(i);
+    return i;
+  });
+  const btn = el('button', 'icon-btn');
+  btn.innerHTML = ICONS.plus;
+  btn.setAttribute('aria-label', 'Add item');
+  div.appendChild(btn);
+  body.appendChild(div);
+  const add = () => {
+    const vals = ins.map(i => i.value.trim());
+    if (vals.some(v => !v)) return;
+    onAdd(vals);
+    ins.forEach(i => i.value = '');
+  };
+  btn.addEventListener('click', add);
+  ins[ins.length-1].addEventListener('keydown', e => { if (e.key === 'Enter') add(); });
+};
 const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
 
 function fmtTime12(hhmm) {                 // "14:30" -> "2:30 PM"
@@ -1171,9 +1116,10 @@ function confirmRowDelete(what, name, fn) {
   });
 }
 /* ---------- generic list row (todo / matrix items) ---------- */
-function makeCheckRow(item, { onToggle, onDelete, mini }) {
+function makeCheckRow(item, { onToggle, onDelete, mini, badge, isDone = i => i.d }) {
+  const done = isDone(item);
   const row = el('div', mini ? 'mi' : 'ti');
-  if (item.d) row.classList.add('done');
+  if (done) row.classList.add('done');
   if (!mini) {
     const tick = el('button', 'tick'); tick.innerHTML = ICONS.check; tick.setAttribute('aria-label', 'Toggle done');
     tick.addEventListener('click', onToggle);
@@ -1182,6 +1128,7 @@ function makeCheckRow(item, { onToggle, onDelete, mini }) {
     row.addEventListener('click', e => { if (!e.target.closest('.row-x')) onToggle(); });
   }
   row.appendChild(el('span', 'tx', item.t));
+  if (badge) row.appendChild(badge);
   const x = el('button', 'row-x'); x.innerHTML = ICONS.x; x.setAttribute('aria-label', 'Delete item');
   x.addEventListener('click', e => { e.stopPropagation(); confirmRowDelete('task', item.t, onDelete); });
   row.appendChild(x);
@@ -1312,23 +1259,14 @@ const TYPES = {
     render(body, w) {
       body.innerHTML = `
         <div class="todo">
-          <div class="todo-add">
-            <input type="text" placeholder="Add a task…" maxlength="140" aria-label="New task">
-            <button class="icon-btn" aria-label="Add task">${ICONS.plus}</button>
-          </div>
           <div class="todo-list"></div>
           <div class="todo-foot"><span class="cnt"></span><button class="link clear" hidden>Clear done</button></div>
         </div>`;
-      const input = body.querySelector('input');
-      const add = () => {
-        const t = input.value.trim();
-        if (!t) return;
-        w.data.items.push({ t, d: false });
-        input.value = '';
-        drawList(); saveState(); input.focus();
-      };
-      body.querySelector('.icon-btn').addEventListener('click', add);
-      input.addEventListener('keydown', e => { if (e.key === 'Enter') add(); });
+      const list = body.querySelector('.todo-list');
+      makeAddRow(body.querySelector('.todo'), [{ ph: 'Add a task…', max: 140, aria: 'New task' }], vals => {
+        w.data.items.push({ t: vals[0], d: false });
+        drawList(); saveState();
+      });
       body.querySelector('.clear').addEventListener('click', () => {
         w.data.items = w.data.items.filter(i => !i.d);
         drawList(); saveState();
@@ -1808,27 +1746,25 @@ const TYPES = {
         list.innerHTML = '';
         if (!w.data.items.length) list.appendChild(el('div', 'mini-empty', 'No dailies yet — add a habit above.'));
         w.data.items.forEach((it, idx) => {
-          if (it.last !== today && it.last !== yest && it.streak) it.streak = 0;   // missed a day
-          const row = el('div', 'ti' + (it.last === today ? ' done' : ''));
-          const tick = el('button', 'tick'); tick.innerHTML = ICONS.check; tick.setAttribute('aria-label', 'Toggle daily');
-          tick.addEventListener('click', () => {
-            if (it.last === today) {                          // undo today's check
-              it.last = it.pl || ''; it.streak = it.ps || 0;
-            } else {
-              it.pl = it.last; it.ps = it.streak || 0;
-              it.streak = (it.last === yest ? (it.streak || 0) + 1 : 1);
-              it.last = today;
-              if ((it.best || 0) < it.streak) it.best = it.streak;
-            }
-            draw(); saveState();
-          });
+          if (it.last !== today && it.last !== yest && it.streak) it.streak = 0;
           const chip = el('span', 'streak' + (it.streak >= 7 ? ' hot' : it.streak >= 1 ? ' on' : ''));
           chip.innerHTML = `${ICONS.flame}<b>${it.streak || 0}</b>`;
           chip.title = `${it.streak || 0}-day streak · best ${it.best || 0}`;
-          const x = el('button', 'row-x'); x.innerHTML = ICONS.x; x.setAttribute('aria-label', 'Delete daily');
-          x.addEventListener('click', () => confirmRowDelete('daily', it.t, () => { w.data.items.splice(idx, 1); draw(); saveState(); }));
-          row.append(tick, el('span', 'tx', it.t), chip, x);
-          list.appendChild(row);
+          list.appendChild(makeCheckRow(it, {
+            isDone: i => i.last === today,
+            onToggle: () => {
+              if (it.last === today) { it.last = it.pl || ''; it.streak = it.ps || 0; }
+              else {
+                it.pl = it.last; it.ps = it.streak || 0;
+                it.streak = (it.last === yest ? (it.streak || 0) + 1 : 1);
+                it.last = today;
+                if ((it.best || 0) < it.streak) it.best = it.streak;
+              }
+              draw(); saveState();
+            },
+            onDelete: () => { w.data.items.splice(idx, 1); draw(); saveState(); },
+            badge: chip
+          }));
         });
         const n = w.data.items.length;
         const done = w.data.items.filter(i => i.last === today).length;
@@ -1886,22 +1822,12 @@ const TYPES = {
           (a.d - b.d) || (a.due || '').localeCompare(b.due || ''));
         if (!items.length) list.appendChild(el('div', 'mini-empty', 'No deadlines — enjoy it while it lasts.'));
         items.forEach(item => {
-          const row = el('div', 'ti' + (item.d ? ' done' : ''));
-          const tick = el('button', 'tick'); tick.innerHTML = ICONS.check; tick.setAttribute('aria-label', 'Toggle done');
-          tick.addEventListener('click', () => { item.d = !item.d; draw(); saveState(); syncCalendars(); });
-          row.append(tick, el('span', 'tx', item.t));
-          if (item.due && !item.d) {
-            const b = badge(item.due);
-            row.appendChild(el('span', 'badge' + (b.c ? ' ' + b.c : ''), b.t));
-          }
-          const x = el('button', 'row-x'); x.innerHTML = ICONS.x; x.setAttribute('aria-label', 'Delete deadline');
-          x.addEventListener('click', () => confirmRowDelete('deadline', item.t, () => {
-            const idx = w.data.items.indexOf(item);
-            if (idx > -1) w.data.items.splice(idx, 1);
-            draw(); saveState(); syncCalendars();
+          const bData = (item.due && !item.d) ? badge(item.due) : null;
+          list.appendChild(makeCheckRow(item, {
+            onToggle: () => { item.d = !item.d; draw(); saveState(); syncCalendars(); },
+            onDelete: () => { const idx = w.data.items.indexOf(item); if (idx > -1) w.data.items.splice(idx, 1); draw(); saveState(); syncCalendars(); },
+            badge: bData ? el('span', 'badge' + (bData.c ? ' ' + bData.c : ''), bData.t) : null
           }));
-          row.appendChild(x);
-          list.appendChild(row);
         });
         const open = (w.data.items || []).filter(i => !i.d).length;
         if (m) m.extra.textContent = open ? `${open} open` : '';
@@ -2156,15 +2082,15 @@ const TYPES = {
       body.innerHTML = `
         <div class="lk">
           <div class="lk-list"></div>
-          <div class="inline-add">
-            <input type="text" class="grow lbl" placeholder="Name" maxlength="40" aria-label="Link name">
-            <input type="text" class="grow url" placeholder="URL" maxlength="300" aria-label="Link URL">
-            <button class="icon-btn" aria-label="Add link">${ICONS.plus}</button>
-          </div>
         </div>`;
       const list = body.querySelector('.lk-list');
-      const lblIn = body.querySelector('.lbl');
-      const urlIn = body.querySelector('.url');
+      makeAddRow(body.querySelector('.lk'), [
+        { cls: 'grow lbl', ph: 'Name', max: 40, aria: 'Link name' },
+        { cls: 'grow url', ph: 'URL', max: 300, aria: 'Link URL' }
+      ], vals => {
+        w.data.items.push({ label: vals[0], url: vals[1] });
+        draw(); saveState();
+      });
       const norm = u => /^https?:\/\//i.test(u) ? u : 'https://' + u;
       const draw = () => {
         list.innerHTML = '';
@@ -2190,15 +2116,6 @@ const TYPES = {
           list.appendChild(row);
         });
       };
-      const add = () => {
-        const label = lblIn.value.trim(), url = urlIn.value.trim();
-        if (!label || !url) return;
-        w.data.items.push({ label, url });
-        lblIn.value = ''; urlIn.value = '';
-        draw(); saveState();
-      };
-      body.querySelector('.icon-btn').addEventListener('click', add);
-      urlIn.addEventListener('keydown', e => { if (e.key === 'Enter') add(); });
       draw();
     },
   },
