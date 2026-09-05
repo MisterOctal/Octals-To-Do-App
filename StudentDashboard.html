@@ -1272,7 +1272,6 @@ const TYPES = {
         drawList(); saveState();
       });
 
-      const list = body.querySelector('.todo-list');
       const drawList = () => {
         list.innerHTML = '';
         if (!w.data.items.length) list.appendChild(el('div', 'mini-empty', 'Nothing yet — add a task above.'));
