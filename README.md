@@ -43,7 +43,7 @@ I made this app with Claude, few choices worth calling out:
 - **Priority matrix widget**: a 2x2 Eisenhower-style matrix (urgent/important quadrants) for sorting tasks by priority.
 - **Sticky note widget**: a free-text ruled notepad for quick notes.
 - **Pomodoro timer widget**: configurable focus/break lengths with a running countdown.
-- **Timer widget**: a continuous productivity stopwatch: start it and it runs until you press stop. It also logs your hours per day and shows a Mon-Sun breakdown for the current week (with a weekly total), so you can see e.g. Monday 7.5 h, Tuesday 5.4 h at a glance. Hovering over the weekly summary reveals a basic visual bar chart of your progress. A running timer survives page reloads and accidental tab closes; it keeps counting and the closed time is credited to your weekly hours.
+- **Timer widget**: a continuous productivity stopwatch: start it and it runs until you press stop. It also logs your hours per day and shows a Mon-Sun breakdown for the current week (with a weekly total), so you can see e.g. Monday 7.5 h, Tuesday 5.4 h at a glance. Hovering over the weekly summary reveals a basic visual bar chart of your progress. A running timer survives page reloads and accidental tab closes; it keeps counting and the closed time is credited to your weekly hours. Supports manual editing of daily statistics in customize mode.
 - **Class schedule widget**: a simple time-sorted list of the day's events/classes.
 - **Quick links widget**: shortcuts to frequently used sites (e.g. Gmail, Calendar, Drive).
 - **Calendar widget**: a monthly calendar with day selection and dot markers, which automatically pulls in dates from your deadlines.

@@ -145,6 +145,14 @@ input,textarea,select{font:inherit; color:inherit}
 .btn.sm{padding:6px 12px; font-size:12.5px; border-radius:8px}
 .btn svg{width:15px; height:15px}
 
+.btn.tm-edit-btn {
+  display: none !important;
+  pointer-events: auto !important;
+}
+body[data-mode="edit"] .btn.tm-edit-btn {
+  display: inline-flex !important;
+}
+
 
 /* ============ productivity timer ============ */
 .tm{flex:1; min-height:0; display:flex; flex-direction:column; align-items:center; gap:7px; text-align:center; overflow:hidden}
@@ -496,7 +504,13 @@ body[data-mode="edit"] .w-resize{display:block}
 .cal-dots i{width:4px; height:4px; border-radius:99px; background:var(--accent)}
 .cal-dots i.dl{background:var(--amber)}
 .cal-d.sel .cal-dots i{background:#FAF9F5}
-.cal-sel{flex:0 0 auto; max-height:38%; overflow-y:auto; border-top:1px solid var(--line); margin-top:6px; padding-top:6px}
+.cal-ring{
+  position:absolute; inset:2px; border-radius:50%;
+  border:2px solid var(--line); pointer-events:none;
+  mask: radial-gradient(transparent 65%, black 66%); -webkit-mask: radial-gradient(transparent 65%, black 66%);
+}
+.cal-sel{flex:0 0 auto; height:110px; overflow-y:auto; border-top:1px solid var(--line); margin-top:6px; padding-top:6px}
+.cal-sel .mini-empty{display:flex; align-items:center; justify-content:center; height:100%}
 .cal-sel-day{font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:3px}
 .cse{display:flex; align-items:center; gap:7px; font-size:12px; padding:2.5px 2px; min-width:0}
 .cse i{width:5px; height:5px; border-radius:99px; background:var(--accent); flex:0 0 auto}
@@ -1059,11 +1073,38 @@ function renderAll() {
   requestAnimationFrame(() => requestAnimationFrame(() => canvas.classList.add('booted')));
 }
 
+function syncCountdownsToDeadlines() {
+  const cdWidgets = state.widgets.filter(w => w.type === 'countdown');
+  const dlWidget = state.widgets.find(w => w.type === 'deadlines');
+  if (!dlWidget) return;
+  cdWidgets.forEach(cw => {
+    if (cw.data.target) {
+      const k = cw.data.target.slice(0, 10);
+      if (!(dlWidget.data.items || []).some(i => i.t === cw.title && i.due === k)) {
+        (dlWidget.data.items = dlWidget.data.items || []).push({ t: cw.title, due: k, d: false });
+      }
+    }
+  });
+  saveState();
+}
+
 function addWidget(type) {
   const t = TYPES[type];
   const spot = autoPlace(t.defW, t.defH);
   const w = { id: uid(), type, title: t.label, x: spot.x, y: spot.y, w: t.defW, h: t.defH, data: t.defData() };
   state.widgets.push(w);
+
+  if (type === 'countdown' && w.data.target) {
+    const dlW = state.widgets.find(x => x.type === 'deadlines');
+    if (dlW) {
+      const k = w.data.target.slice(0, 10);
+      if (!(dlW.data.items || []).some(i => i.t === w.title && i.due === k)) {
+        (dlW.data.items = dlW.data.items || []).push({ t: w.title, due: k, d: false });
+        refreshWidget(dlW);
+      }
+    }
+  }
+
   const node = createWidget(w);
   node.classList.add('pop');
   setTimeout(() => node.classList.remove('pop'), 400);
@@ -1202,7 +1243,17 @@ const TYPES = {
     },
     tick(body, w, now) {
       const m = mounted.get(w.id);
-      const target = new Date(w.data.target);
+      let targetDate = w.data.target;
+      if (!targetDate) {
+        const dlWidget = state.widgets.find(x => x.type === 'deadlines');
+        if (dlWidget) {
+          const nearest = (dlWidget.data.items || [])
+            .filter(i => !i.d && i.due)
+            .sort((a, b) => a.due.localeCompare(b.due))[0];
+          if (nearest) targetDate = nearest.due + 'T09:00';
+        }
+      }
+      const target = new Date(targetDate);
       if (m) m.extra.textContent = isNaN(target) ? '' : fmtTargetShort(target);
       const blocks = body.querySelector('.cd-blocks');
       const done = body.querySelector('.cd-done');
@@ -1449,6 +1500,7 @@ const TYPES = {
           <div class="pm-ctl">
             <button class="btn primary sm start">Start</button>
             <button class="link zero" title="Reset the current session clock">Reset</button>
+            <button class="btn ghost sm tm-edit-btn">Edit Stats</button>
           </div>
           <div class="tm-week">
             <div class="tm-week-title"><span>This week</span><b class="tm-total"></b></div>
@@ -1471,6 +1523,7 @@ const TYPES = {
         saveState();
         this.paint(body, w);
       });
+      body.querySelector('.tm-edit-btn').addEventListener('click', () => this.openStatsEditor(w));
       this.paint(body, w);
 
       const weekEl = body.querySelector('.tm-week');
@@ -1550,6 +1603,38 @@ const TYPES = {
       this.credit(w);                                 // rolls into the right day across midnight
       saveState();
       this.paint(body, w);
+    },
+    openStatsEditor(w) {
+      const holder = el('div');
+      const fields = this.weekKeys().map(k => {
+        const row = el('div', 'field');
+        row.append(el('label', null, fmtDayLabel(k)), el('input', 'text'));
+        const inp = row.querySelector('input');
+        inp.type = 'number'; inp.step = '0.1'; inp.min = '0';
+        inp.value = ((w.data.log[k] || 0) / 3600).toFixed(1);
+        inp.setAttribute('aria-label', `Hours for ${fmtDayLabel(k)}`);
+        row.appendChild(el('span', null, ' h'));
+        row.style.display = 'flex'; row.style.alignItems = 'center'; row.style.gap = '8px';
+        holder.appendChild(row);
+        return { k, inp };
+      });
+      openModal({
+        title: 'Edit Study Time',
+        sub: 'Adjust daily totals for this week (in hours).',
+        body: holder,
+        actions: [
+          { label: 'Cancel', cls: 'ghost' },
+          { label: 'Save', cls: 'primary', fn: () => {
+            fields.forEach(f => {
+              const val = parseFloat(f.inp.value) || 0;
+              w.data.log[f.k] = Math.round(val * 3600);
+            });
+            saveState();
+            const m = mounted.get(w.id);
+            if (m) this.paint(m.body, w);
+          } },
+        ],
+      });
     },
   },
 
@@ -1752,12 +1837,15 @@ const TYPES = {
           list.appendChild(makeCheckRow(it, {
             isDone: i => i.last === today,
             onToggle: () => {
-              if (it.last === today) { it.last = it.pl || ''; it.streak = it.ps || 0; }
-              else {
+              if (it.last === today) {
+                it.last = it.pl || ''; it.streak = it.ps || 0;
+                if (it.history) it.history = it.history.filter(d => d !== today);
+              } else {
                 it.pl = it.last; it.ps = it.streak || 0;
                 it.streak = (it.last === yest ? (it.streak || 0) + 1 : 1);
                 it.last = today;
                 if ((it.best || 0) < it.streak) it.best = it.streak;
+                (it.history = it.history || []).push(today);
               }
               draw(); saveState();
             },
@@ -1782,6 +1870,15 @@ const TYPES = {
       body.querySelector('.icon-btn').addEventListener('click', add);
       input.addEventListener('keydown', e => { if (e.key === 'Enter') add(); });
       draw();
+    },
+    tick(body, w, now) {
+      const today = dayKey(now);
+      const m = mounted.get(w.id);
+      if (m && m.extra) {
+        const n = (w.data.items || []).length;
+        const done = (w.data.items || []).filter(i => i.last === today).length;
+        m.extra.textContent = n ? `${done}/${n} today` : '';
+      }
     },
   },
 
@@ -1817,8 +1914,10 @@ const TYPES = {
       };
       const draw = () => {
         list.innerHTML = '';
-        const items = (w.data.items || []).slice().sort((a, b) =>
-          (a.d - b.d) || (a.due || '').localeCompare(b.due || ''));
+        const items = (w.data.items || []).slice().sort((a, b) => {
+          if (a.d !== b.d) return a.d - b.d;
+          return (a.due || '').localeCompare(b.due || '');
+        });
         if (!items.length) list.appendChild(el('div', 'mini-empty', 'No deadlines — enjoy it while it lasts.'));
         items.forEach(item => {
           const bData = (item.due && !item.d) ? badge(item.due) : null;
@@ -1890,9 +1989,13 @@ const TYPES = {
         const day = this.gather()[r.sel];
         const evs = day ? day.ev.slice().sort((a, b) => (a.time || '').localeCompare(b.time || '')) : [];
         const dls = day ? day.dl : [];
-        if (!evs.length && !dls.length) selBox.appendChild(el('div', 'mini-empty', 'Nothing planned.'));
+        const dailyWidget = state.widgets.find(w => w.type === 'dailies');
+        const dailies = dailyWidget ? (dailyWidget.data.items || []) : [];
+
+        if (!evs.length && !dls.length && !dailies.length) selBox.appendChild(el('div', 'mini-empty', 'Nothing planned.'));
+
         evs.forEach(ev => {
-          const row = el('div', 'cse');
+          const row = el('div', 'cse' + (ev.type === 'countdown' ? ' dl' : ''));
           row.append(el('i'), el('span', 't', ev.time ? fmtTime12(ev.time) : ''), el('span', 'x', ev.label));
           selBox.appendChild(row);
         });
@@ -1935,6 +2038,18 @@ const TYPES = {
           const d = addDays(start, i);
           const k = dayKey(d);
           const cell = el('button', 'cal-d');
+
+          const dlW = state.widgets.find(x => x.type === 'dailies');
+          if (dlW && dlW.data.items.length) {
+            const done = dlW.data.items.filter(it => it.history && it.history.includes(k)).length;
+            const pct = (done / dlW.data.items.length) * 100;
+            if (pct > 0) {
+              const ring = el('div', 'cal-ring');
+              ring.style.background = `conic-gradient(var(--accent) 0% ${pct}%, transparent ${pct}% 100%)`;
+              cell.appendChild(ring);
+            }
+          }
+
           if (d.getMonth() !== r.m) cell.classList.add('out');
           if (k === today) cell.classList.add('today');
           if (k === r.sel) cell.classList.add('sel');
@@ -2206,6 +2321,16 @@ function openSettings(w) {
             else if (n._key === 'target' && !v) return;   // keep the old date if cleared
             else w.data[n._key] = v;
           });
+          if (w.type === 'countdown' && w.data.target) {
+            const dlW = state.widgets.find(x => x.type === 'deadlines');
+            if (dlW) {
+              const k = w.data.target.slice(0, 10);
+              if (!(dlW.data.items || []).some(i => i.t === w.title && i.due === k)) {
+                (dlW.data.items = dlW.data.items || []).push({ t: w.title, due: k, d: false });
+                refreshWidget(dlW);
+              }
+            }
+          }
           refreshWidget(w);
           saveState();
         } },
@@ -2250,6 +2375,7 @@ function applyTitle() {
 
 /* ---------- boot ---------- */
 state = loadState() || defaultState();
+syncCountdownsToDeadlines();
 applyTitle();
 buildTray();
 renderAll();
