@@ -71,6 +71,17 @@ html[data-theme="claude"] body{
   --bg:#fdfaf5; --panel:#ffffff; --panel-2:#f5f2ea; --ink:#3a3a3a; --soft:#6a6a6a; --muted:#9a9a9a; --faint:#cacaca; --line:#eeeae3; --line-2:#e5e1d8; --accent:#8e7cc3; --accent-deep:#7a68b0; --accent-soft:#f4f1fa; --green:#7ca87c; --green-soft:#f2f7f2; --amber:#cda65a; --amber-soft:#fdf8ee; --blue:#8da7c6; --blue-soft:#f0f4f8; --danger:#d9534f; --shadow-1:0 1px 3px rgba(0,0,0,.05), 0 4px 12px rgba(0,0,0,.05); --shadow-2:0 4px 10px rgba(0,0,0,.08), 0 16px 32px rgba(0,0,0,.12); --serif:'Lora', serif;
 }
 
+html[data-theme="dark-fantasy"]{color-scheme:dark}
+html[data-theme="dark-fantasy"] body{
+  --bg:#000000; --panel:#050505; --panel-2:#18181b; --ink:#f4f4f5; --soft:#c8c8cc; --muted:#8e8e94; --faint:#4a4a50; --line:#18181b; --line-2:#2a2a2e; --accent:#b45309; --accent-deep:#c8650f; --accent-soft:#652121; --green:#8a9a5b; --green-soft:#1a1f12; --amber:#b45309; --amber-soft:#2a1606; --blue:#7d8ba1; --blue-soft:#14171d; --danger:#c0392b; --shadow-1:0 1px 2px rgba(0,0,0,.6), 0 4px 14px rgba(0,0,0,.6); --shadow-2:0 4px 10px rgba(0,0,0,.7), 0 16px 38px rgba(101,33,33,.35); --serif:Georgia, 'Times New Roman', serif; --sans:Georgia, 'Times New Roman', serif;
+}
+html[data-theme="dark-fantasy"] body{background:radial-gradient(1100px 520px at 10% -12%, rgba(101,33,33,.28), transparent 60%),radial-gradient(900px 480px at 100% 0%, rgba(180,83,9,.10), transparent 55%),var(--bg)}
+html[data-theme="dark-fantasy"] .topbar{background:rgba(0,0,0,.86)}
+html[data-theme="dark-fantasy"] .tray{background:linear-gradient(to bottom, #050505, #000000)}
+html[data-theme="dark-fantasy"] .widget{border-color:#18181b}
+html[data-theme="dark-fantasy"] .btn.primary{color:#ffffff}
+html[data-theme="dark-fantasy"] ::-webkit-scrollbar-thumb{background:#652121}
+html[data-theme="dark-fantasy"] .canvas > .ghost{background:var(--accent-soft)}
 #themeSelect{
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
@@ -175,7 +186,20 @@ body[data-mode="edit"] .btn.tm-edit-btn {
 .tm-d.today{background:var(--accent-soft)}
 .tm-d.today b{color:var(--accent-deep)}
 .tm-d.zero b{color:var(--faint)}
-
+.tm-d .tm-barwrap{display:none}
+/* large widget: the weekly chart becomes a permanent part of the layout */
+.tm.big{justify-content:flex-start}
+.tm.big .tm-state{margin-top:0}
+.tm.big .tm-week{flex:1; display:flex; flex-direction:column; margin-top:6px; padding-top:9px}
+.tm.big .tm-days{flex:1; min-height:70px; gap:8px}
+.tm.big .tm-d{background:none; padding:0; gap:4px; justify-content:flex-end}
+.tm.big .tm-d .tm-barwrap{display:flex; flex:1; width:100%; align-items:flex-end; justify-content:center; min-height:0; order:0}
+.tm.big .tm-d .tm-barwrap i{display:block; width:min(70%,34px); min-height:3px; border-radius:5px 5px 2px 2px; background:var(--line-2); transition:height .25s ease}
+.tm.big .tm-d.today .tm-barwrap i{background:var(--accent)}
+.tm.big .tm-d:not(.zero):not(.today) .tm-barwrap i{background:var(--accent-deep); opacity:.65}
+.tm.big .tm-d b{order:1; font-size:12px}
+.tm.big .tm-d span{order:2; font-size:10px}
+.tm.big .tm-d.today{background:none}
 .tm-hover-chart{
   position:fixed; z-index:1000; background:var(--panel); border:1px solid var(--line);
   border-radius:10px; padding:8px; box-shadow:var(--shadow-2);
@@ -627,6 +651,7 @@ body[data-mode="edit"] .w-resize{display:block}
       <option value="its-light">ITS-inspired (Light)</option>
       <option value="its-dark">ITS-inspired (Dark)</option>
       <option value="claude">Lavender Light</option>
+      <option value="dark-fantasy">Dark Fantasy</option>
     </select>
     <button class="btn primary" id="modeBtn"></button>
   </div>
@@ -808,7 +833,7 @@ function pxW(w){ return Math.round(w * cellW + (w - 1) * GAP); }
 function pxH(h){ return h * ROW + (h - 1) * GAP; }
 
 function defaultState() {
-  const cdDefault = toLocalInput(new Date(2026, 11, 14, 9, 0));
+  const cdDefault = (() => { const d = addDays(new Date(), 35); d.setHours(9, 0, 0, 0); return toLocalInput(d); })();   // relative, never stale
   const in2 = dayKey(addDays(new Date(), 2)), in3 = dayKey(addDays(new Date(), 3)), in9 = dayKey(addDays(new Date(), 9));
   return {
     title: 'My Dashboard',
@@ -1343,29 +1368,32 @@ const TYPES = {
     },
   },
 
-  /* ---- days until 2027 ---- */
+  /* ---- days until next New Year (rolls over automatically) ---- */
   y2027: {
-    label: 'Days until 2027', desc: 'Big countdown to Jan 1, 2027.',
+    label: 'Days until New Year', desc: 'Big countdown to next Jan 1.',
     icon: ICONS.y2027, defW: 3, defH: 2, minW: 2, minH: 2,
     defData: () => ({}),
     render(body, w) {
       body.innerHTML = `
         <div class="y27">
-          <div class="y27-line"><span class="y27-num">—</span><span class="y27-sub">days until <b>2027</b></span></div>
+          <div class="y27-line"><span class="y27-num">—</span><span class="y27-sub">days until <b></b></span></div>
           <div class="bar"><i style="width:0%"></i></div>
           <div class="y27-cap"></div>
         </div>`;
       this.tick(body, w, new Date());
     },
     tick(body, w, now) {
-      const target = new Date(2027, 0, 1);
-      const startYr = new Date(2026, 0, 1);
+      const yr = now.getFullYear();
+      const target = new Date(yr + 1, 0, 1);
+      const startYr = new Date(yr, 0, 1);
+      const sub = body.querySelector('.y27-sub');
+      sub.innerHTML = 'days until <b>' + (yr + 1) + '</b>';
       const days = Math.max(0, Math.ceil((target - now) / 86400000));
       body.querySelector('.y27-num').textContent = days;
-      if (days === 0) body.querySelector('.y27-sub').innerHTML = 'Happy <b>2027</b>! 🎉';
+      if (now.getMonth() === 0 && now.getDate() === 1) body.querySelector('.y27-sub').innerHTML = 'Happy <b>' + yr + '</b>! 🎉';
       const pct = clamp(((now - startYr) / (target - startYr)) * 100, 0, 100);
       body.querySelector('.bar i').style.width = pct.toFixed(2) + '%';
-      body.querySelector('.y27-cap').textContent = pct.toFixed(1) + '% of 2026 complete';
+      body.querySelector('.y27-cap').textContent = pct.toFixed(1) + '% of ' + yr + ' complete';
     },
   },
 
@@ -1593,9 +1621,20 @@ const TYPES = {
       body.querySelector('.tm-edit-btn').addEventListener('click', () => this.openStatsEditor(w));
       this.paint(body, w);
 
+      const tmEl = body.querySelector('.tm');
+      if (body._tmRO) body._tmRO.disconnect();
+      if (window.ResizeObserver) {
+        body._tmRO = new ResizeObserver(() => {
+          const big = body.clientHeight >= 300 && body.clientWidth >= 280;
+          if (tmEl.classList.toggle('big', big) && big) { const c = document.body.querySelector('.tm-hover-chart'); if (c) c.remove(); }
+        });
+        body._tmRO.observe(body);
+      }
+
       const weekEl = body.querySelector('.tm-week');
       weekEl.style.position = 'relative';
       weekEl.addEventListener('mousemove', (e) => {
+        if (body.querySelector('.tm.big')) return;   // big widget already shows the chart permanently
         let chart = document.body.querySelector('.tm-hover-chart');
         if (!chart) {
           chart = el('div', 'tm-hover-chart');
@@ -1651,16 +1690,22 @@ const TYPES = {
       days.innerHTML = '';
       const today = dayKey(new Date());
       let total = 0;
+      const secs = [], bars = [];
       this.weekKeys().forEach(k => {
         const s = (w.data.log[k] || 0) + (on && k === today ? Math.round((Date.now() - w.data.last) / 1000) : 0);
         total += s;
         const h = s / 3600;
         const d = el('div', 'tm-d' + (k === today ? ' today' : '') + (s === 0 ? ' zero' : ''));
-        d.append(el('span', null, fromKey(k).toLocaleDateString(undefined, { weekday: 'short' }).slice(0, 2)),
+        const wrap = el('div', 'tm-barwrap'), bar = el('i');
+        wrap.appendChild(bar);
+        secs.push(s); bars.push(bar);
+        d.append(el('span', null, fromKey(k).toLocaleDateString(undefined, { weekday: 'short' }).slice(0, 2)), wrap,
                  el('b', null, h ? (h >= 10 ? h.toFixed(0) : h.toFixed(1)) : '0'));
         d.title = `${fmtDayLabel(k)} — ${(s / 3600).toFixed(2)} h`;
         days.appendChild(d);
       });
+      const maxS = Math.max(3600, ...secs);
+      bars.forEach((b, i) => { b.style.height = (secs[i] / maxS * 100) + '%'; });
       body.querySelector('.tm-total').textContent = (total / 3600).toFixed(1) + ' h total';
       const m = mounted.get(w.id);
       if (m) m.extra.textContent = on ? 'timing…' : '';
@@ -1895,6 +1940,7 @@ const TYPES = {
       const draw = () => {
         const today = dayKey(new Date()), yest = dayKey(addDays(new Date(), -1));
         list.innerHTML = '';
+        w.data.items.sort((a, b) => a.t.localeCompare(b.t, undefined, { sensitivity: 'base', numeric: true }));   // alphabetical
         if (!w.data.items.length) list.appendChild(el('div', 'mini-empty', 'No dailies yet — add a habit above.'));
         w.data.items.forEach((it, idx) => {
           if (it.last !== today && it.last !== yest && it.streak) it.streak = 0;
